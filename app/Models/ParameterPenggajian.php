@@ -9,7 +9,7 @@ class ParameterPenggajian extends Model
 {
     use HasFactory;
 
-    protected $table = 'parameter_penggajians';
+    protected $table = 'parameter_penggajian';
     protected $primaryKey = 'id_param';
 
     protected $fillable = [

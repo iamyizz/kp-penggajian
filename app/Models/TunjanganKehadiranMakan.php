@@ -9,7 +9,7 @@ class TunjanganKehadiranMakan extends Model
 {
     use HasFactory;
 
-    protected $table = 'tunjangan_kehadiran_makans';
+    protected $table = 'tunjangan_kehadiran_makan';
     protected $primaryKey = 'id_tkm';
 
     protected $fillable = [
