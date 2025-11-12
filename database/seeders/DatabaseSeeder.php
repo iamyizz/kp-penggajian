@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             KaryawanSeeder::class,
             ParameterPenggajianSeeder::class,
             KehadiranSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
