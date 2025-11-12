@@ -1,50 +1,67 @@
-<aside class="w-64 bg-white shadow-lg flex flex-col">
-    <div class="p-6 border-b border-gray-200">
-        <div class="flex items-center space-x-2">
-            <x-heroicon-s-banknotes class="w-6 h-6 text-green-600" />
-            <span class="text-lg font-semibold">Klinik Samara</span>
-        </div>
+<aside class="d-flex flex-column flex-shrink-0 bg-white border-end shadow-sm" style="width: 250px; min-height: 100vh;">
+    <!-- Header -->
+    <div class="p-3 border-bottom bg-success text-white d-flex align-items-center">
+        <i class="bi bi-bank2 me-2 fs-5"></i>
+        <span class="fw-semibold fs-5">Klinik Samara</span>
     </div>
 
-    <nav class="flex-1 p-4 space-y-1">
+    <!-- Navigation -->
+    <ul class="nav nav-pills flex-column mb-auto mt-2 px-2">
         @if (Auth::user()->role === 'admin')
-            <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-home class="w-5 h-5 text-gray-600" />
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('karyawan.index') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-users class="w-5 h-5 text-gray-600" />
-                <span>Data Karyawan</span>
-            </a>
-            <a href="{{ route('penggajian.index') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-credit-card class="w-5 h-5 text-gray-600" />
-                <span>Penggajian</span>
-            </a>
-            <a href="{{ route('bonus.index') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-gift class="w-5 h-5 text-gray-600" />
-                <span>Bonus</span>
-            </a>
-            <a href="{{ route('laporan.index') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-document-text class="w-5 h-5 text-gray-600" />
-                <span>Laporan</span>
-            </a>
+            <li class="nav-item mb-1">
+                <a href="{{ route('dashboard') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('dashboard') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-house-door me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('karyawan.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('karyawan.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-people me-2"></i> Data Karyawan
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('penggajian.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('penggajian.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-credit-card me-2"></i> Penggajian
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('bonus.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('bonus.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-gift me-2"></i> Bonus
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('laporan.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('laporan.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-file-earmark-text me-2"></i> Laporan
+                </a>
+            </li>
         @elseif (Auth::user()->role === 'koor_absen')
-            <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-home class="w-5 h-5 text-gray-600" />
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('absensi.index') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-calendar class="w-5 h-5 text-gray-600" />
-                <span>Data Absensi</span>
-            </a>
-            <a href="{{ route('profil') }}" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100">
-                <x-heroicon-s-user class="w-5 h-5 text-gray-600" />
-                <span>Profil</span>
-            </a>
+            <li class="nav-item mb-1">
+                <a href="{{ route('dashboard') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('dashboard') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-house-door me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('absensi.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-calendar-check me-2"></i> Data Absensi
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('profil') }}"
+                   class="nav-link d-flex align-items-center {{ request()->is('profil') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-person-circle me-2"></i> Profil
+                </a>
+            </li>
         @endif
-    </nav>
+    </ul>
 
-    <div class="p-4 border-t border-gray-200 text-center text-sm text-gray-500">
+    <!-- Footer -->
+    <div class="mt-auto text-center small text-muted border-top py-3">
         &copy; {{ date('Y') }} Klinik Samara
     </div>
 </aside>

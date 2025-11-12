@@ -9,9 +9,8 @@ class KaryawanSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('karyawan')->insert([
+        $karyawans = [
             [
-                'nip' => 'EMP001',
                 'nama' => 'dr. Andi Saputra',
                 'jabatan_id' => 1,
                 'tanggal_masuk' => '2022-01-15',
@@ -20,7 +19,6 @@ class KaryawanSeeder extends Seeder
                 'aktif' => true,
             ],
             [
-                'nip' => 'EMP002',
                 'nama' => 'Siti Rahmawati',
                 'jabatan_id' => 2,
                 'tanggal_masuk' => '2023-03-10',
@@ -29,7 +27,6 @@ class KaryawanSeeder extends Seeder
                 'aktif' => true,
             ],
             [
-                'nip' => 'EMP003',
                 'nama' => 'Rizky Hidayat',
                 'jabatan_id' => 3,
                 'tanggal_masuk' => '2022-06-01',
@@ -38,7 +35,6 @@ class KaryawanSeeder extends Seeder
                 'aktif' => true,
             ],
             [
-                'nip' => 'EMP004',
                 'nama' => 'Dewi Lestari',
                 'jabatan_id' => 4,
                 'tanggal_masuk' => '2024-02-01',
@@ -46,6 +42,14 @@ class KaryawanSeeder extends Seeder
                 'rekening_bank' => 'BRI 567890123',
                 'aktif' => true,
             ],
-        ]);
+        ];
+
+        // Tambahkan NIP dengan format KLSM-0001, KLSM-0002, dst.
+        foreach ($karyawans as $index => &$karyawan) {
+            $number = str_pad($index + 1, 4, '0', STR_PAD_LEFT);
+            $karyawan['nip'] = 'KLSM-' . $number;
+        }
+
+        DB::table('karyawan')->insert($karyawans);
     }
 }

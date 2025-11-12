@@ -8,12 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle($request, Closure $next, ...$roles)
     {
-        if (auth()->user()->role !== $role) {
-            abort(403, 'Akses ditolak.');
+        if (!in_array(auth()->user()->role, $roles)) {
+            abort(403, 'Unauthorized action.');
         }
-
         return $next($request);
     }
 }

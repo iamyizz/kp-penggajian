@@ -1,37 +1,58 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\GajiController;
+use App\Http\Controllers\BonusController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\LaporanController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Redirect root ke login
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// ✅ Route Dashboard Dinamis (berdasarkan role)
+// Dashboard (1 view dinamis berdasarkan role)
 Route::get('/dashboard', function () {
     $user = auth()->user();
 
-    // Kalau user belum login, redirect ke login page
     if (!$user) {
         return redirect()->route('login');
     }
 
-    return view('dashboard'); // hanya 1 view, isinya dinamis berdasarkan role
+    return view('dashboard'); // view tunggal, isi dinamis berdasar role
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ✅ Route untuk Profile (default Breeze)
-Route::middleware('auth')->group(function () {
+// Default Breeze (profile)
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+// ===========================
+// 👑 ADMIN ONLY
+// ===========================
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('karyawan', KaryawanController::class);
+    Route::resource('penggajian', GajiController::class);
+    Route::resource('bonus', BonusController::class);
+    Route::resource('laporan', LaporanController::class);
+});
 
-// 🔹 Tambahkan route dummy untuk testing sidebar
-Route::view('/karyawan', 'dashboard')->name('karyawan.index');
-Route::view('/penggajian', 'dashboard')->name('penggajian.index');
-Route::view('/bonus', 'dashboard')->name('bonus.index');
-Route::view('/laporan', 'dashboard')->name('laporan.index');
-Route::view('/absensi', 'dashboard')->name('absensi.index');
-Route::view('/profil', 'dashboard')->name('profil');
+// ===========================
+// 🧾 KOOR ABSEN ONLY
+// ===========================
+Route::middleware(['auth', 'role:koor_absen'])->group(function () {
+    Route::resource('absensi', AbsensiController::class);
+});
+
+// Route bawaan Breeze (login, register, dll)
+require __DIR__ . '/auth.php';
