@@ -39,12 +39,18 @@
         </header>
 
         <!-- Konten -->
-        <main class="p-6 overflow-y-auto">
+        <main class="p-6 overflow-y-auto pb-20">
             @yield('content')
         </main>
-    </div>
+        <!-- Footer (fixed di bawah viewport) -->
+        <footer class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 text-center text-sm text-gray-600 shadow-md z-40">
+            <div class="container mx-auto">
+                &copy; {{ now()->year }} {{ config('app.name', 'Sistem Penggajian Klinik Samara') }}. Semua hak dilindungi.
+            </div>
+        </footer>
+        </div>
 
-    <!-- Bootstrap Bundle JS (sudah termasuk Popper.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <!-- Bootstrap Bundle JS (sudah termasuk Popper.js) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
