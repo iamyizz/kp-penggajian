@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penggajian;
 use Illuminate\Http\Request;
 
 class GajiController extends Controller
@@ -11,7 +12,12 @@ class GajiController extends Controller
      */
     public function index()
     {
-        //
+        $penggajian = Penggajian::with('karyawan', 'karyawan.jabatan')
+            ->orderBy('periode_tahun', 'desc')
+            ->orderBy('periode_bulan', 'desc')
+            ->paginate(15);
+
+        return view('penggajian.index', compact('penggajian'));
     }
 
     /**

@@ -60,8 +60,4 @@
         @endif
     </ul>
 
-    <!-- Footer -->
-    <div class="mt-auto text-center small text-muted border-top py-3">
-        &copy; {{ date('Y') }} Klinik Samara
-    </div>
 </aside>

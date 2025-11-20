@@ -27,14 +27,16 @@
     <!-- Konten Utama -->
     <div class="flex-1 flex flex-col">
         <!-- Header -->
-        <header class="bg-white shadow p-4 flex justify-between items-center">
-            <h1 class="text-lg font-semibold">Dashboard</h1>
-            <div>
-                <span class="text-sm text-gray-600 mr-3">👋 {{ Auth::user()->name }}</span>
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="text-red-500 hover:underline">Logout</button>
-                </form>
+        <header class="bg-white border-bottom shadow-sm p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h5 mb-0">Dashboard</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-muted small">👋 {{ Auth::user()->name }}</span>
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-link text-danger p-0">Logout</button>
+                    </form>
+                </div>
             </div>
         </header>
 
