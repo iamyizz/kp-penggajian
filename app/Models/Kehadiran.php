@@ -9,6 +9,8 @@ class Kehadiran extends Model
 {
     use HasFactory;
 
+    protected $connection = 'penggajian-1';
+
     protected $table = 'kehadiran';
     protected $primaryKey = 'id_kehadiran';
 

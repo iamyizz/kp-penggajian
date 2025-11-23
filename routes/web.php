@@ -45,6 +45,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('penggajian', GajiController::class);
     Route::resource('bonus', BonusController::class);
     Route::resource('laporan', LaporanController::class);
+    
+    // Absensi routes (admin dapat akses)
+    Route::resource('absensi', AbsensiController::class);
+    Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 });
 
 // ===========================
@@ -52,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // ===========================
 Route::middleware(['auth', 'role:koor_absen'])->group(function () {
     Route::resource('absensi', AbsensiController::class);
+    Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 });
 
 // Route bawaan Breeze (login, register, dll)

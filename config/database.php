@@ -63,6 +63,25 @@ return [
             ]) : [],
         ],
 
+        'penggajian-1' => [
+            'driver' => 'mysql',
+            'host' => env('PENGGAJIAN1_DB_HOST', '127.0.0.1'),
+            'port' => env('PENGGAJIAN1_DB_PORT', '3306'),
+            'database' => env('PENGGAJIAN1_DB_DATABASE', 'penggajian-1'),
+            'username' => env('PENGGAJIAN1_DB_USERNAME', 'root'),
+            'password' => env('PENGGAJIAN1_DB_PASSWORD', ''),
+            'unix_socket' => env('PENGGAJIAN1_DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

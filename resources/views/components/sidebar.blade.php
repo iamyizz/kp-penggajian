@@ -27,6 +27,12 @@
                 </a>
             </li>
             <li class="nav-item mb-1">
+                <a href="{{ route('absensi.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-calendar-check me-2"></i> Absensi
+                </a>
+            </li>
+            <li class="nav-item mb-1">
                 <a href="{{ route('bonus.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('bonus.*') ? 'active bg-success text-white' : 'text-dark' }}">
                     <i class="bi bi-gift me-2"></i> Bonus
