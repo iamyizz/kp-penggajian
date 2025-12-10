@@ -27,9 +27,13 @@
                     <label class="form-label">Bulan</label>
                     <select name="month" class="form-select">
                         @for($m=1;$m<=12;$m++)
+<<<<<<< HEAD
                             <option value="{{ $m }}" {{ $m == $month ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::create()->month($m)->locale('id')->translatedFormat('F') }}
                             </option>
+=======
+                            <option value="{{ $m }}" {{ $m == $month ? 'selected' : '' }}>{{ sprintf('%02d', $m) }}</option>
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
                         @endfor
                     </select>
                 </div>

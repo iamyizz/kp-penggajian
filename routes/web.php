@@ -7,7 +7,10 @@ use App\Http\Controllers\GajiController;
 use App\Http\Controllers\BonusController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\LaporanController;
+<<<<<<< HEAD
 use App\Http\Controllers\ParameterPenggajianController;
+=======
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +49,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('penggajian', GajiController::class);
     Route::resource('bonus', BonusController::class);
     Route::resource('laporan', LaporanController::class);
+<<<<<<< HEAD
 
     // Absensi routes (admin dapat akses)
     Route::resource('absensi', AbsensiController::class);
@@ -57,6 +61,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{id_param}/update', [ParameterPenggajianController::class, 'update'])->name('update');
         Route::delete('/{id_param}/delete', [ParameterPenggajianController::class, 'destroy'])->name('destroy');
     });
+=======
+    
+    // Absensi routes (admin dapat akses)
+    Route::resource('absensi', AbsensiController::class);
+    Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
 });
 
 // ===========================

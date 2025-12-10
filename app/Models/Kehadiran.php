@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Kehadiran extends Model
 {
     use HasFactory;
+<<<<<<< HEAD
+=======
+
+    protected $connection = 'penggajian-1';
+
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
     protected $table = 'kehadiran';
     protected $primaryKey = 'id_kehadiran';
 

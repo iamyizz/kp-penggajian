@@ -74,6 +74,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+<<<<<<< HEAD
         Schema::create('bonus_karyawan', function (Blueprint $table) {
             $table->id('id_bonus');
             $table->foreignId('karyawan_id')->constrained('karyawan', 'id_karyawan')->onDelete('cascade');
@@ -82,6 +83,14 @@ return new class extends Migration
             $table->year('tahun');
             $table->decimal('jumlah', 12, 2);
             $table->string('keterangan')->nullable();
+=======
+        // 6. Tabel Parameter Penggajian (Setting Global)
+        Schema::create('parameter_penggajian', function (Blueprint $table) {
+            $table->id('id_param');
+            $table->string('nama_param', 50);
+            $table->decimal('nilai', 12, 2);
+            $table->text('keterangan')->nullable();
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
             $table->timestamps();
         });
     }

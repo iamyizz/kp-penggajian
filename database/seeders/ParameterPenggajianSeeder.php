@@ -10,6 +10,7 @@ class ParameterPenggajianSeeder extends Seeder
     public function run(): void
     {
         DB::table('parameter_penggajian')->insert([
+<<<<<<< HEAD
             [
                 'nama_param' => 'Tunjangan Makan Per Hari',
                 'key' => 'tunjangan_makan_per_hari',
@@ -66,6 +67,12 @@ class ParameterPenggajianSeeder extends Seeder
                 'satuan' => 'Hari',
                 'keterangan' => 'Jumlah hari kerja standar per bulan.'
             ]
+=======
+            ['nama_param' => 'Tunjangan Harian', 'nilai' => 25000, 'keterangan' => 'Diberikan per hari hadir'],
+            ['nama_param' => 'Potongan Terlambat', 'nilai' => 15000, 'keterangan' => 'Potongan per hari terlambat'],
+            ['nama_param' => 'Lembur per Jam', 'nilai' => 20000, 'keterangan' => 'Bonus lembur per jam'],
+            ['nama_param' => 'Potongan BPJS', 'nilai' => 200000, 'keterangan' => 'Potongan tetap bulanan'],
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
         ]);
     }
 }

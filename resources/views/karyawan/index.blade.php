@@ -78,7 +78,11 @@
                                     <form method="POST" action="{{ route('karyawan.update', $k->id_karyawan) }}">
                                         @csrf
                                         @method('PUT')
+<<<<<<< HEAD
                                         <div class="modal-header bg-success text-white rounded-top-4">
+=======
+                                        <div class="modal-header bg-primary text-white rounded-top-4">
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
                                             <h5 class="modal-title fw-semibold">
                                                 <i class="bi bi-pencil-square me-2"></i>Edit Karyawan
                                             </h5>
@@ -153,7 +157,11 @@
                                         </div>
                                         <div class="modal-footer border-0">
                                             <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Batal</button>
+<<<<<<< HEAD
                                             <button type="submit" class="btn btn-success rounded-pill px-4">Simpan</button>
+=======
+                                            <button type="submit" class="btn btn-primary rounded-pill px-4">Simpan</button>
+>>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
                                         </div>
                                     </form>
                                 </div>
