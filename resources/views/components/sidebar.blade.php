@@ -14,7 +14,6 @@
                     <i class="bi bi-house-door me-2"></i> Dashboard
                 </a>
             </li>
-<<<<<<< HEAD
 
             {{-- PARAMETER PENGGAJIAN --}}
             <li class="nav-item mb-1">
@@ -24,8 +23,6 @@
                 </a>
             </li>
 
-=======
->>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
             <li class="nav-item mb-1">
                 <a href="{{ route('karyawan.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('karyawan.*') ? 'active bg-success text-white' : 'text-dark' }}">
@@ -56,10 +53,6 @@
                     <i class="bi bi-file-earmark-text me-2"></i> Laporan
                 </a>
             </li>
-<<<<<<< HEAD
-
-=======
->>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
         @elseif (Auth::user()->role === 'koor_absen')
             <li class="nav-item mb-1">
                 <a href="{{ route('dashboard') }}"
@@ -81,8 +74,4 @@
             </li>
         @endif
     </ul>
-<<<<<<< HEAD
-=======
-
->>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
 </aside>
