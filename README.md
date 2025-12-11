@@ -35,8 +35,8 @@ Aplikasi ini dirancang untuk mempermudah manajemen SDM dalam lingkungan klinik d
 - 💰 **Penggajian**
   - Hitung dan tampilkan data penggajian per karyawan.
 
-- 📄 **Laporan**
-  - Menyediakan rekap laporan SDM (opsional, dalam pengembangan).
+- 🧑‍💻 **Role-Based Access**
+  - Admin dan Koordinator Absen memiliki hak akses berbeda.
 
 ---
 
