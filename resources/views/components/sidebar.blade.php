@@ -14,15 +14,6 @@
                     <i class="bi bi-house-door me-2"></i> Dashboard
                 </a>
             </li>
-
-            {{-- PARAMETER PENGGAJIAN --}}
-            <li class="nav-item mb-1">
-                <a href="{{ route('parameter.index') }}"
-                   class="nav-link d-flex align-items-center {{ request()->routeIs('parameter.index') ? 'active bg-success text-white' : 'text-dark' }}">
-                    <i class="bi bi-gear me-2"></i> Parameter Penggajian
-                </a>
-            </li>
-
             <li class="nav-item mb-1">
                 <a href="{{ route('karyawan.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('karyawan.*') ? 'active bg-success text-white' : 'text-dark' }}">
@@ -30,21 +21,27 @@
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a href="{{ route('penggajian.index') }}"
-                   class="nav-link d-flex align-items-center {{ request()->routeIs('penggajian.*') ? 'active bg-success text-white' : 'text-dark' }}">
-                    <i class="bi bi-credit-card me-2"></i> Penggajian
+                <a href="{{ route('absensi.index') }}"
+                class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                <i class="bi bi-calendar-check me-2"></i> Absensi
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a href="{{ route('absensi.index') }}"
-                   class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
-                    <i class="bi bi-calendar-check me-2"></i> Absensi
+                <a href="{{ route('parameter.index') }}"
+                   class="nav-link d-flex align-items-center {{ request()->routeIs('parameter.index') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-gear me-2"></i> Parameter Penggajian
                 </a>
             </li>
             <li class="nav-item mb-1">
                 <a href="{{ route('bonus.index') }}"
-                   class="nav-link d-flex align-items-center {{ request()->routeIs('bonus.*') ? 'active bg-success text-white' : 'text-dark' }}">
-                    <i class="bi bi-gift me-2"></i> Bonus
+                class="nav-link d-flex align-items-center {{ request()->routeIs('bonus.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                <i class="bi bi-gift me-2"></i> Bonus
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('penggajian.index') }}"
+                class="nav-link d-flex align-items-center {{ request()->routeIs('penggajian.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-credit-card me-2"></i> Penggajian
                 </a>
             </li>
             <li class="nav-item mb-1">
