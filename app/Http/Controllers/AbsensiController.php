@@ -19,15 +19,27 @@ class AbsensiController extends Controller
         $lateThreshold = (int) config('attendance.late_threshold_minutes', 5);
 
         $karyawans = Karyawan::where('aktif', true)->orderBy('nama')->get();
-
-        // use Indonesia timezone (WIB) for date calculations
+        // prepare today's attendances (always show)
         $today = Carbon::today('Asia/Jakarta')->toDateString();
-        $attendances = Kehadiran::with('karyawan')
+        $todayAttendances = Kehadiran::with('karyawan')
             ->where('tanggal', $today)
             ->orderBy('jam_masuk')
             ->get();
 
-        return view('absensi.index', compact('karyawans', 'attendances', 'workStart', 'workEnd', 'lateThreshold'));
+        // Accept optional filters from request: date and karyawan_id
+        $date = $request->input('date');
+        $karyawanId = $request->input('karyawan_id');
+
+        $searchResults = collect();
+        if ($date) {
+            $query = Kehadiran::with('karyawan')->where('tanggal', $date)->orderBy('jam_masuk');
+            if ($karyawanId) {
+                $query->where('karyawan_id', $karyawanId);
+            }
+            $searchResults = $query->get();
+        }
+
+        return view('absensi.index', compact('karyawans', 'todayAttendances', 'searchResults', 'workStart', 'workEnd', 'lateThreshold'));
     }
 
     /**
