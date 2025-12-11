@@ -57,15 +57,19 @@
                                             data-bs-toggle="modal" data-bs-target="#modalEdit{{ $k->id_karyawan }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <form action="{{ route('karyawan.destroy', $k->id_karyawan) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Yakin ingin menghapus data ini?')"
-                                          class="d-inline">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger px-2 btn-delete"
+                                            data-id="{{ $k->id_karyawan }}"
+                                            data-nama="{{ $k->nama }}"
+                                            data-url="{{ route('karyawan.destroy', $k->id_karyawan) }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                    <form id="delete-form-{{ $k->id_karyawan }}"
+                                        action="{{ route('karyawan.destroy', $k->id_karyawan) }}"
+                                        method="POST" class="d-none">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger px-2">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -78,11 +82,7 @@
                                     <form method="POST" action="{{ route('karyawan.update', $k->id_karyawan) }}">
                                         @csrf
                                         @method('PUT')
-<<<<<<< HEAD
                                         <div class="modal-header bg-success text-white rounded-top-4">
-=======
-                                        <div class="modal-header bg-primary text-white rounded-top-4">
->>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
                                             <h5 class="modal-title fw-semibold">
                                                 <i class="bi bi-pencil-square me-2"></i>Edit Karyawan
                                             </h5>
@@ -157,11 +157,7 @@
                                         </div>
                                         <div class="modal-footer border-0">
                                             <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Batal</button>
-<<<<<<< HEAD
                                             <button type="submit" class="btn btn-success rounded-pill px-4">Simpan</button>
-=======
-                                            <button type="submit" class="btn btn-primary rounded-pill px-4">Simpan</button>
->>>>>>> 4e98af530a1c52172cbb55e67993dd36fbf28406
                                         </div>
                                     </form>
                                 </div>
@@ -264,4 +260,40 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function () {
+
+            const id = this.dataset.id;
+            const nama = this.dataset.nama ?? 'data ini';
+            const formId = `delete-form-${id}`;
+
+            Swal.fire({
+                title: 'Hapus Data?',
+                html: `<small class="text-muted">Anda akan menghapus: <b>${nama}</b></small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+
+        });
+    });
+
+});
+</script>
+
 @endsection

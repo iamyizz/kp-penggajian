@@ -59,14 +59,19 @@
                                             data-bs-target="#modalEdit{{ $p->id_param }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger px-2 btn-delete"
+                                            data-id="{{ $p->id_param }}"
+                                            data-nama="{{ $p->nama_param }}"
+                                            data-url="{{ route('parameter.destroy', $p->id_param) }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
 
-                                    {{-- Delete --}}
-                                    <form action="{{ route('parameter.destroy', $p->id_param) }}" method="POST">
+                                    <form id="delete-form-{{ $p->id_param }}"
+                                        action="{{ route('parameter.destroy', $p->id_param) }}"
+                                        method="POST" class="d-none">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger px-2">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -190,5 +195,39 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function () {
+
+            const id = this.dataset.id;
+            const nama = this.dataset.nama ?? 'data ini';
+            const formId = `delete-form-${id}`;
+
+            Swal.fire({
+                title: 'Hapus Data?',
+                html: `<small class="text-muted">Anda akan menghapus: <b>${nama}</b></small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+
+        });
+    });
+
+});
+</script>
 @endsection

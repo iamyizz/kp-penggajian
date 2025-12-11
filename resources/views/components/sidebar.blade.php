@@ -15,6 +15,12 @@
                 </a>
             </li>
             <li class="nav-item mb-1">
+                <a href="{{ route('jabatan.index') }}"
+                class="nav-link d-flex align-items-center {{ request()->routeIs('jabatan.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-briefcase me-2"></i> Jabatan
+                </a>
+            </li>
+            <li class="nav-item mb-1">
                 <a href="{{ route('karyawan.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('karyawan.*') ? 'active bg-success text-white' : 'text-dark' }}">
                     <i class="bi bi-people me-2"></i> Data Karyawan
@@ -30,6 +36,12 @@
                 <a href="{{ route('parameter.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('parameter.index') ? 'active bg-success text-white' : 'text-dark' }}">
                     <i class="bi bi-gear me-2"></i> Parameter Penggajian
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a href="{{ route('tunjangan.index') }}"
+                class="nav-link d-flex align-items-center {{ request()->routeIs('tunjangan.*') ? 'active bg-success text-white' : 'text-dark' }}">
+                    <i class="bi bi-cash-coin me-2"></i> Tunjangan Kehadiran & Makan
                 </a>
             </li>
             <li class="nav-item mb-1">

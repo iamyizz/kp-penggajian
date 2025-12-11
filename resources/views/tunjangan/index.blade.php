@@ -1,0 +1,238 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-4">
+
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-0">🍱 Tunjangan Kehadiran & Makan</h2>
+            <p class="text-muted small mb-0">Perhitungan tunjangan berdasarkan kehadiran karyawan</p>
+        </div>
+
+        <button id="btnProses" class="btn btn-success shadow-sm px-4 rounded-pill">
+            <i class="bi bi-cpu me-1"></i> Proses Tunjangan
+        </button>
+    </div>
+
+    {{-- Filter --}}
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold text-muted">Periode Bulan</label>
+                    <input type="month" name="bulan" class="form-control rounded-pill"
+                        value="{{ $bulan }}">
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-dark rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-search me-1"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Table --}}
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle text-center mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama</th>
+                        <th>Jabatan</th>
+                        <th>Total Hadir</th>
+                        <th>Total Terlambat</th>
+                        <th>Tunjangan Harian</th>
+                        <th>Potongan</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($data as $item)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->karyawan->nama }}</td>
+                        <td>{{ $item->karyawan->jabatan->nama_jabatan }}</td>
+
+                        <td>{{ $item->total_hadir }}</td>
+                        <td>{{ $item->total_terlambat }}</td>
+
+                        <td>Rp {{ number_format($item->tunjangan_harian,0,',','.') }}</td>
+                        <td class="text-danger">Rp {{ number_format($item->potongan_terlambat,0,',','.') }}</td>
+
+                        <td class="fw-bold text-success">
+                            Rp {{ number_format($item->total_tunjangan,0,',','.') }}
+                        </td>
+
+                        <td>
+                            <button class="btn btn-sm btn-outline-success rounded-pill px-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detail{{ $item->id }}">
+                                <i class="bi bi-info-circle"></i> Detail
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Modal Detail -->
+                    <div class="modal fade" id="detail{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg rounded-4">
+
+                                <div class="modal-header bg-success text-white rounded-top-4">
+                                    <h5 class="modal-title fw-semibold">
+                                        <i class="bi bi-cash-stack me-2"></i> Detail Tunjangan
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <p class="fw-bold mb-1">{{ $item->karyawan->nama }}</p>
+                                    <p class="text-muted small mb-3">{{ $item->karyawan->jabatan->nama_jabatan }}</p>
+
+                                    <div class="border rounded-4 p-3 mb-3 bg-light">
+                                        <h6 class="fw-bold text-success mb-2">Tunjangan Kehadiran & Makan</h6>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span>Total Hadir:</span>
+                                            <span>{{ $item->total_hadir }} hari</span>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tarif per Hari:</span>
+                                            <span>Rp {{ number_format($tarif_makan,0,',','.') }}</span>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex justify-content-between fw-semibold">
+                                            <span>Total Tunjangan:</span>
+                                            <span>Rp {{ number_format($item->tunjangan_harian,0,',','.') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="border rounded-4 p-3 mb-3 bg-light">
+                                        <h6 class="fw-bold text-danger mb-2">Potongan Keterlambatan</h6>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span>Total Terlambat:</span>
+                                            <span>{{ $item->total_terlambat }} kali</span>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span>Potongan per Kali:</span>
+                                            <span>Rp {{ number_format($tarif_potongan,0,',','.') }}</span>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="d-flex justify-content-between fw-semibold text-danger">
+                                            <span>Total Potongan:</span>
+                                            <span>Rp {{ number_format($item->potongan_terlambat,0,',','.') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="border rounded-4 p-3 bg-white shadow-sm">
+                                        <div class="d-flex justify-content-between fw-bold">
+                                            <span>Total Akhir:</span>
+                                            <span class="text-success">
+                                                Rp {{ number_format($item->total_tunjangan,0,',','.') }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer border-0">
+                                    <button class="btn btn-outline-secondary rounded-pill"
+                                        data-bs-dismiss="modal">Tutup</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-database-x fs-1"></i>
+                                <p class="mt-3 mb-0">Belum ada data untuk periode ini.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{{-- Overlay Loading --}}
+<div id="loadingOverlay"
+    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; backdrop-filter:blur(3px);">
+    <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+        <div class="spinner-border" style="width:4rem; height:4rem;"></div>
+        <p class="mt-3 fs-5">Memproses...</p>
+    </div>
+</div>
+
+{{-- Script --}}
+<script>
+document.getElementById('btnProses').addEventListener('click', () => {
+
+    const bulanInput = document.querySelector('input[name="bulan"]').value;
+
+    if (!bulanInput) {
+        return Swal.fire("Oops!", "Silakan pilih bulan dulu.", "warning");
+    }
+
+    const [tahun, bulan] = bulanInput.split("-");
+
+    Swal.fire({
+        title: "Proses Tunjangan?",
+        text: `Proses tunjangan bulan ${bulan}-${tahun}?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Ya, proses",
+        cancelButtonText: "Batal",
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#6c757d',
+        customClass: {
+            popup: 'rounded-4',
+            confirmButton: 'rounded-pill px-4',
+            cancelButton: 'rounded-pill px-4'
+        }
+    }).then(result => {
+        if (result.isConfirmed) {
+
+            document.getElementById('loadingOverlay').style.display = 'block';
+
+            fetch("{{ route('tunjangan.proses') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ bulan, tahun })
+            })
+            .then(res => res.json())
+            .then(res => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+
+                Swal.fire({
+                    icon: res.status ? "success" : "error",
+                    title: res.message,
+                    customClass: {
+                        popup: 'rounded-4'
+                    }
+                }).then(() => location.reload());
+            });
+        }
+    });
+});
+</script>
+
+@endsection

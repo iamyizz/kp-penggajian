@@ -8,6 +8,8 @@ use App\Http\Controllers\BonusController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ParameterPenggajianController;
+use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\TunjanganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{id_param}/update', [ParameterPenggajianController::class, 'update'])->name('update');
         Route::delete('/{id_param}/delete', [ParameterPenggajianController::class, 'destroy'])->name('destroy');
     });
+
+    Route::resource('jabatan', JabatanController::class);
+
+    Route::post('/tunjangan-proses', [TunjanganController::class, 'proses'])
+        ->name('tunjangan.proses');
+
+    Route::resource('tunjangan', TunjanganController::class)
+        ->only(['index']);
 });
 
 // ===========================
