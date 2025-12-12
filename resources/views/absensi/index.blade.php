@@ -183,7 +183,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-warning" title="Edit">Edit</a>
+                                        <a href="{{ route('absensi.edit', $r->id_kehadiran) }}" class="btn btn-sm btn-warning me-1" title="Edit">Edit</a>
                                         <form method="POST" action="{{ route('absensi.destroy', $r->id_kehadiran) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                                             @csrf
                                             @method('DELETE')

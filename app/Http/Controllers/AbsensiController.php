@@ -273,6 +273,101 @@ class AbsensiController extends Controller
     }
 
     /**
+     * Show the form for editing the specified attendance.
+     */
+    public function edit(string $id)
+    {
+        $user = auth()->user();
+        if (! $user || ! in_array($user->role, ['admin', 'koor_absen'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $attendance = Kehadiran::findOrFail($id);
+        $karyawans = Karyawan::where('aktif', true)->orderBy('nama')->get();
+
+        return view('absensi.edit', compact('attendance', 'karyawans'));
+    }
+
+    /**
+     * Update the specified attendance in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $user = auth()->user();
+        if (! $user || ! in_array($user->role, ['admin', 'koor_absen'])) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $attendance = Kehadiran::findOrFail($id);
+
+        $data = $request->validate([
+            'status_kehadiran' => 'required|string',
+            'jam_masuk' => 'nullable|string',
+            'jam_keluar' => 'nullable|string',
+            'lembur_jam' => 'nullable|numeric',
+        ]);
+
+        // Normalize times to H:i:s when provided
+        try {
+            if (! empty($data['jam_masuk'])) {
+                $jamMasuk = Carbon::parse($data['jam_masuk'])->format('H:i:s');
+                $attendance->jam_masuk = $jamMasuk;
+            } else {
+                $attendance->jam_masuk = null;
+            }
+        } catch (\Exception $e) {
+            // ignore parse error, keep original value
+        }
+
+        try {
+            if (! empty($data['jam_keluar'])) {
+                $jamKeluar = Carbon::parse($data['jam_keluar'])->format('H:i:s');
+                $attendance->jam_keluar = $jamKeluar;
+            } else {
+                $attendance->jam_keluar = null;
+            }
+        } catch (\Exception $e) {
+            // ignore parse error
+        }
+
+        // Update status
+        $attendance->status_kehadiran = $data['status_kehadiran'];
+
+        // Recalculate terlambat based on configured work start + threshold
+        $workStart = Carbon::createFromFormat('H:i:s', config('attendance.work_start', '08:00:00'), 'Asia/Jakarta');
+        $lateThreshold = (int) config('attendance.late_threshold_minutes', 5);
+        if ($attendance->jam_masuk) {
+            $jamMasukTime = Carbon::createFromFormat('H:i:s', $attendance->jam_masuk, 'Asia/Jakarta');
+            $attendance->terlambat = $jamMasukTime->gt($workStart->copy()->addMinutes($lateThreshold));
+        } else {
+            $attendance->terlambat = false;
+        }
+
+        // Recalculate lembur_jam if jam_keluar is present and greater than work end
+        if ($attendance->jam_keluar) {
+            $workEnd = Carbon::createFromFormat('H:i:s', config('attendance.work_end', '16:00:00'), 'Asia/Jakarta');
+            $jamKeluarTime = Carbon::createFromFormat('H:i:s', $attendance->jam_keluar, 'Asia/Jakarta');
+            if ($jamKeluarTime->greaterThan($workEnd)) {
+                $minutes = $jamKeluarTime->diffInMinutes($workEnd);
+                $attendance->lembur_jam = round($minutes / 60, 2);
+            } else {
+                // allow manual override via input if provided
+                $attendance->lembur_jam = isset($data['lembur_jam']) ? $data['lembur_jam'] : 0;
+            }
+        } else {
+            $attendance->lembur_jam = isset($data['lembur_jam']) ? $data['lembur_jam'] : 0;
+        }
+
+        $attendance->save();
+
+        return redirect()->route('absensi.index', [
+            'rekap_karyawan_id' => $attendance->karyawan_id,
+            'month' => Carbon::parse($attendance->tanggal)->month,
+            'year' => Carbon::parse($attendance->tanggal)->year,
+        ])->with('success', 'Data absensi berhasil diperbarui.');
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
