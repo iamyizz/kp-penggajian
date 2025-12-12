@@ -55,7 +55,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->only(['index', 'show'])
         ->middleware(['auth','role:admin']); // sesuaikan middleware
 
-    Route::resource('laporan', LaporanController::class);
+    // Halaman laporan
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+    // Ajax detail slip gaji (modal)
+    Route::get('/laporan/slip/{id}', [LaporanController::class, 'slipPdf'])->name('laporan.slipPdf');
+
 
     // Absensi routes (admin dapat akses)
     Route::resource('absensi', AbsensiController::class);
