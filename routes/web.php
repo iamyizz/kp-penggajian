@@ -48,10 +48,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('karyawan', KaryawanController::class);
 
     // routes untuk penggajian
-    Route::post('/penggajian/proses', [App\Http\Controllers\PenggajianController::class, 'proses'])
+    Route::post('/penggajian/proses', [PenggajianController::class, 'proses'])
         ->name('penggajian.proses');
 
-    Route::resource('penggajian', App\Http\Controllers\PenggajianController::class)
+    Route::resource('penggajian', PenggajianController::class)
         ->only(['index', 'show'])
         ->middleware(['auth','role:admin']); // sesuaikan middleware
 

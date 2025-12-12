@@ -60,6 +60,13 @@ class ParameterPenggajianSeeder extends Seeder
                 'keterangan' => 'Nominal lembur per jam.'
             ],
             [
+                'nama_param' => 'Potongan BPJS',
+                'key' => 'potongan_bpjs_persen',
+                'nilai' => 0,
+                'satuan' => 'Persen',
+                'keterangan' => 'Potongan BPJS'
+            ],
+            [
                 'nama_param' => 'Hari Kerja Normal',
                 'key' => 'hari_kerja_normal',
                 'nilai' => 30,
