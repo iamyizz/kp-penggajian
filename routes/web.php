@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\KaryawanController;
-use App\Http\Controllers\GajiController;
+use App\Http\Controllers\PenggajianController;
 use App\Http\Controllers\BonusController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\LaporanController;
@@ -46,8 +46,15 @@ Route::middleware(['auth'])->group(function () {
 // ===========================
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('karyawan', KaryawanController::class);
-    Route::resource('penggajian', GajiController::class);
-    Route::resource('bonus', BonusController::class);
+
+    // routes untuk penggajian
+    Route::post('/penggajian/proses', [App\Http\Controllers\PenggajianController::class, 'proses'])
+        ->name('penggajian.proses');
+
+    Route::resource('penggajian', App\Http\Controllers\PenggajianController::class)
+        ->only(['index', 'show'])
+        ->middleware(['auth','role:admin']); // sesuaikan middleware
+
     Route::resource('laporan', LaporanController::class);
 
     // Absensi routes (admin dapat akses)
