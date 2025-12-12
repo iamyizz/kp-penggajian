@@ -165,13 +165,4 @@ class PenggajianController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Tampilkan detail slip gaji (opsional).
-     */
-    public function show($id)
-    {
-        $record = Penggajian::with('karyawan.jabatan')->findOrFail($id);
-        return view('penggajian.show', compact('record'));
-    }
 }

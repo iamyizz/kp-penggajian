@@ -55,6 +55,7 @@
                         <th>Jabatan</th>
                         <th>Gaji Pokok</th>
                         <th>Tunjangan</th>
+                        <th>Lembur</th>
                         <th>Potongan</th>
                         <th>Total Gaji</th>
                         <th>Aksi</th>
@@ -72,12 +73,12 @@
                         <td>
                             Rp {{ number_format(
                                 $item->tunjangan_jabatan +
-                                $item->tunjangan_kehadiran_makan +
-                                $item->lembur
-                            ) }}
+                                $item->tunjangan_kehadiran_makan
+                                ) }}
                         </td>
+                        <td>Rp {{ number_format($item->lembur) }}</td>
 
-                        <td>
+                        <td class="fw-bold text-danger">
                             Rp {{ number_format(
                                 $item->potongan_absen +
                                 $item->potongan_bpjs
