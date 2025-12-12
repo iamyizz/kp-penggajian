@@ -39,7 +39,72 @@ class AbsensiController extends Controller
             $searchResults = $query->get();
         }
 
-        return view('absensi.index', compact('karyawans', 'todayAttendances', 'searchResults', 'workStart', 'workEnd', 'lateThreshold'));
+        // Accept optional rekap filters: karyawan_id (for rekap), month, year
+        $rekapKaryawanId = $request->input('rekap_karyawan_id');
+        $month = $request->input('month', Carbon::now('Asia/Jakarta')->month);
+        $year = $request->input('year', Carbon::now('Asia/Jakarta')->year);
+        
+        $karyawan = null;
+        $rekapRecords = collect();
+        $rekapSummary = null;
+
+        if ($rekapKaryawanId) {
+            $karyawan = Karyawan::find($rekapKaryawanId);
+            if ($karyawan) {
+                $rekapRecords = Kehadiran::where('karyawan_id', $rekapKaryawanId)
+                    ->whereYear('tanggal', $year)
+                    ->whereMonth('tanggal', $month)
+                    ->orderBy('tanggal')
+                    ->get();
+
+                $rekapSummary = [
+                    'hadir' => 0,
+                    'izin' => 0,
+                    'sakit' => 0,
+                    'alpha' => 0,
+                    'terlambat_count' => 0,
+                    'terlambat_minutes' => 0,
+                    'pulang_cepat' => 0,
+                    'lembur_jam_total' => 0,
+                ];
+
+                foreach ($rekapRecords as $r) {
+                    switch ($r->status_kehadiran) {
+                        case 'Hadir': $rekapSummary['hadir']++; break;
+                        case 'Izin': $rekapSummary['izin']++; break;
+                        case 'Sakit': $rekapSummary['sakit']++; break;
+                        case 'Alpa': $rekapSummary['alpha']++; break;
+                    }
+
+                    if ($r->terlambat) {
+                        $rekapSummary['terlambat_count']++;
+                    }
+
+                    if ($r->jam_masuk) {
+                        $jamMasuk = Carbon::createFromFormat('H:i:s', $r->jam_masuk, 'Asia/Jakarta');
+                        $scheduledStart = Carbon::createFromFormat('H:i:s', $workStart, 'Asia/Jakarta');
+                        if ($jamMasuk->greaterThan($scheduledStart)) {
+                            $rekapSummary['terlambat_minutes'] += $jamMasuk->diffInMinutes($scheduledStart);
+                        }
+                    }
+
+                    if ($r->jam_keluar) {
+                        $jamKeluar = Carbon::createFromFormat('H:i:s', $r->jam_keluar, 'Asia/Jakarta');
+                        $scheduledEnd = Carbon::createFromFormat('H:i:s', $workEnd, 'Asia/Jakarta');
+                        if ($jamKeluar->lessThan($scheduledEnd)) {
+                            $rekapSummary['pulang_cepat']++;
+                        }
+                    }
+
+                    // Add overtime (lembur) hours
+                    if ($r->lembur_jam) {
+                        $rekapSummary['lembur_jam_total'] += $r->lembur_jam;
+                    }
+                }
+            }
+        }
+
+        return view('absensi.index', compact('karyawans', 'todayAttendances', 'searchResults', 'workStart', 'workEnd', 'lateThreshold', 'karyawan', 'rekapRecords', 'rekapSummary', 'month', 'year'));
     }
 
     /**

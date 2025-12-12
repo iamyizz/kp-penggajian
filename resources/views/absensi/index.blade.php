@@ -5,10 +5,10 @@
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-0">Kelola Absensi Harian</h2>
+            <h2 class="mb-0">Rekap Absensi Bulanan</h2>
+            <p class="small text-muted">Pilih karyawan dan bulan untuk melihat ringkasan absensi.</p>
         </div>
         <div>
-            <a href="{{ route('absensi.rekap') }}" class="btn btn-outline-primary btn-sm me-2">Rekap Bulanan</a>
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahDataModal">Tambah Data</button>
         </div>
     </div>
@@ -20,191 +20,196 @@
         <div class="alert alert-warning alert-dismissible fade show">{{ session('warning') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     @endif
 
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Hadir Hari Ini</h6>
-                    <h2 class="mb-0">{{ $todayAttendances->where('status_kehadiran', 'Hadir')->count() }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Izin</h6>
-                    <h2 class="mb-0">{{ $todayAttendances->where('status_kehadiran', 'Izin')->count() }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Sakit</h6>
-                    <h2 class="mb-0">{{ $todayAttendances->where('status_kehadiran', 'Sakit')->count() }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-muted">Belum Absen</h6>
-                    <h2 class="mb-0">{{ $karyawans->count() - $todayAttendances->count() }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Filter & Form Row -->
+    <!-- Rekap Form -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="{{ route('absensi.index') }}">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <label class="form-label">Cari Karyawan</label>
-                            <select class="form-select" id="searchKaryawan" name="karyawan_id">
-                                <option value="">-- Pilih Karyawan --</option>
-                                @foreach($karyawans as $k)
-                                    <option value="{{ $k->id_karyawan }}" {{ request('karyawan_id') == $k->id_karyawan ? 'selected' : '' }}>{{ $k->nip }} - {{ $k->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Filter Tanggal</label>
-                            <input type="date" class="form-control" id="filterDate" name="date" value="{{ request('date', \Carbon\Carbon::now('Asia/Jakarta')->toDateString()) }}" />
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end gap-2">
-                            <button type="submit" class="btn btn-primary" id="searchBtn">Cari</button>
-                            <button type="button" class="btn btn-secondary" onclick="window.location='{{ route('absensi.index') }}'"> Reset</button>
-                        </div>
-                    </div>
+            <form method="GET" action="{{ route('absensi.index') }}" class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label">Pilih Karyawan</label>
+                    <select name="rekap_karyawan_id" class="form-select" required>
+                        <option value="">-- Pilih Karyawan --</option>
+                        @foreach($karyawans as $k)
+                            <option value="{{ $k->id_karyawan }}" {{ request('rekap_karyawan_id') == $k->id_karyawan ? 'selected' : '' }}>{{ $k->nip }} - {{ $k->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
-            </div>
+                <div class="col-md-3">
+                    <label class="form-label">Bulan</label>
+                    <select name="month" class="form-select">
+                        @for($m=1;$m<=12;$m++)
+                            <option value="{{ $m }}" {{ $m == $month ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->locale('id')->translatedFormat('F') }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tahun</label>
+                    <input type="number" name="year" value="{{ $year }}" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Lihat Rekap</button>
+                </div>
             </form>
-        <!-- Search Results Display (server-side) -->
-        @if(isset($searchResults) && request()->has('date'))
-            <div class="card mb-4" id="searchResults">
-                <div class="card-header bg-info text-white">Hasil Pencarian ({{ request('date') }})</div>
-                <div class="card-body p-0">
-                    <div class="px-3 py-2" id="searchResultsText"></div>
-                    <div class="table-responsive">
-                        <table class="table mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>NIP</th>
-                                    <th>Nama</th>
-                                    <th>Tanggal</th>
-                                    <th>Jam Masuk</th>
-                                    <th>Jam Pulang</th>
-                                    <th>Telat</th>
-                                    <th>Lembur (jam)</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($searchResults as $a)
-                                    <tr>
-                                        <td>{{ $a->karyawan->nip ?? '-' }}</td>
-                                        <td>{{ $a->karyawan->nama ?? '-' }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($a->tanggal)->format('d M Y') }}</td>
-                                        <td>{{ substr($a->jam_masuk ?? '-', 0, 5) }}</td>
-                                        <td>{{ $a->jam_keluar ? substr($a->jam_keluar, 0, 5) : '-' }}</td>
-                                        <td>{{ $a->terlambat ? $a->terlambat : '-' }}</td>
-                                        <td>{{ $a->lembur_jam ?? 0 }}</td>
-                                        <td><span class="badge bg-success">{{ $a->status_kehadiran }}</span></td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                                            @if(auth()->check() && in_array(auth()->user()->role, ['admin','koor_absen']))
-                                                <form action="{{ route('absensi.destroy', $a->id_kehadiran) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
-                                                </form>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="9" class="text-center py-4"><small class="text-muted">Tidak ada hasil untuk tanggal ini.</small></td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-    <!-- Attendance Table -->
-    <div class="card">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <div>
-                <strong>Daftar Absensi Hari Ini</strong>
-                <br>
-                <small class="text-muted">
-                    Tanggal: <span id="current-date">{{ \Carbon\Carbon::now('Asia/Jakarta')->format('d M Y') }}</span> | 
-                    Waktu Indonesia (WIB): <span id="current-time" data-work-start="{{ $workStart }}" data-late-threshold="{{ $lateThreshold }}" class="fw-bold"></span>
-                </small>
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>NIP</th>
-                            <th>Nama</th>
-                            <th>Tanggal</th>
-                            <th>Jam Masuk</th>
-                            <th>Jam Pulang</th>
-                            <th>Telat</th>
-                            <th>Lembur (jam)</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($todayAttendances as $a)
-                            <tr>
-                                <td>{{ $a->karyawan->nip ?? '-' }}</td>
-                                <td>{{ $a->karyawan->nama ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($a->tanggal)->format('d M Y') }}</td>
-                                <td>{{ substr($a->jam_masuk ?? '-', 0, 5) }}</td>
-                                <td>{{ $a->jam_keluar ? substr($a->jam_keluar, 0, 5) : '-' }}</td>
-                                <td>{{ $a->terlambat ? $a->terlambat : '-' }}</td>
-                                <td>{{ $a->lembur_jam ?? 0 }}</td>
-                                <td><span class="badge bg-success">{{ $a->status_kehadiran }}</span></td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                                    @if(auth()->check() && in_array(auth()->user()->role, ['admin','koor_absen']))
-                                        <form action="{{ route('absensi.destroy', $a->id_kehadiran) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="9" class="text-center py-4"><small class="text-muted">Belum ada data absensi.</small></td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 
+    <!-- Rekap Results -->
+    @if($karyawan && $rekapSummary)
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <strong>{{ $karyawan->nip }} - {{ $karyawan->nama }}</strong> | 
+                    {{ \Carbon\Carbon::create()->month((int) $month)->locale('id')->translatedFormat('F') }} {{ $year }}
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Hadir</p>
+                        <h5>{{ $rekapSummary['hadir'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Izin</p>
+                        <h5>{{ $rekapSummary['izin'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Sakit</p>
+                        <h5>{{ $rekapSummary['sakit'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Alpha</p>
+                        <h5>{{ $rekapSummary['alpha'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Terlambat (count)</p>
+                        <h5>{{ $rekapSummary['terlambat_count'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Terlambat (menit)</p>
+                        <h5>{{ $rekapSummary['terlambat_minutes'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Pulang Cepat</p>
+                        <h5>{{ $rekapSummary['pulang_cepat'] }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="small text-muted mb-1">Total Jam Lembur</p>
+                        <h5>{{ $rekapSummary['lembur_jam_total'] }} jam</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Table -->
+        <div class="card">
+            <div class="card-header">Detail Hari per Hari</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Pulang</th>
+                                <th>Status</th>
+                                <th>Terlambat (menit)</th>
+                                <th>Lembur (jam)</th>
+                                <th>Pulang Cepat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($rekapRecords as $r)
+                                <tr>
+                                    <td>{{ \Carbon\Carbon::parse($r->tanggal)->format('d M Y') }}</td>
+                                    <td>{{ $r->jam_masuk ?? '-' }}</td>
+                                    <td>{{ $r->jam_keluar ?? '-' }}</td>
+                                    <td>{{ $r->status_kehadiran }}</td>
+                                    <td>
+                                        @if($r->jam_masuk)
+                                            @php
+                                                $jamMasuk = \Carbon\Carbon::createFromFormat('H:i:s', $r->jam_masuk);
+                                                $scheduledStart = \Carbon\Carbon::createFromFormat('H:i:s', $workStart);
+                                                $diff = $jamMasuk->diffInMinutes($scheduledStart);
+                                                echo $diff > 0 ? $diff : 0;
+                                            @endphp
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>{{ $r->lembur_jam ?? 0 }}</td>
+                                    <td>
+                                        @if($r->jam_keluar)
+                                            @php
+                                                $jamKeluar = \Carbon\Carbon::createFromFormat('H:i:s', $r->jam_keluar);
+                                                $scheduledEnd = \Carbon\Carbon::createFromFormat('H:i:s', $workEnd);
+                                                $early = $scheduledEnd->diffInMinutes($jamKeluar);
+                                                echo $early > 0 ? 'Ya' : 'Tidak';
+                                            @endphp
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-warning" title="Edit">Edit</a>
+                                        <form method="POST" action="{{ route('absensi.destroy', $r->id_kehadiran) }}" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="8" class="text-center small text-muted py-3">Tidak ada data untuk bulan ini.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Note/Hint -->
-    <div class="mt-3">
+    <div class="mt-4">
         <small class="text-muted">
-            <strong>Catatan:</strong> Panel ini hanya untuk pengelolaan data. Proses check-in karyawan tidak dilakukan di sini.
+            <strong>Catatan:</strong> Gunakan form di atas untuk melihat rekap absensi bulanan. Klik tombol "Tambah Data" untuk menambah data absensi baru.
         </small>
     </div>
 </div>
 
-<!-- Modal Tambah Data (Optional - untuk Add Data button) -->
+<!-- Modal Tambah Data -->
 <div class="modal fade" id="tambahDataModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -245,181 +250,7 @@
 
 @push('scripts')
 <script>
-    // Real-time clock for the absensi page (showing Asia/Jakarta time)
-    function updateClock(){
-        const el = document.getElementById('current-time');
-        if(!el) return;
-
-        const fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' });
-        const parts = fmt.formatToParts(new Date());
-        const hour = parseInt(parts.find(p => p.type === 'hour').value, 10);
-        const minute = parseInt(parts.find(p => p.type === 'minute').value, 10);
-        const second = parseInt(parts.find(p => p.type === 'second').value, 10);
-        const hh = hour.toString().padStart(2,'0');
-        const mm = minute.toString().padStart(2,'0');
-        const ss = second.toString().padStart(2,'0');
-        el.textContent = `${hh}:${mm}:${ss}`;
-
-        // Visual hint: mark if current Jakarta time is past late threshold
-        const workStart = el.dataset.workStart || '{{ $workStart }}';
-        const lateThreshold = parseInt(el.dataset.lateThreshold || '{{ $lateThreshold }}', 10);
-        const [wsH, wsM] = (workStart || '08:00:00').split(':').map(n => parseInt(n,10));
-
-        const nowMinutes = hour * 60 + minute;
-        const thresholdMinutes = (wsH * 60 + wsM) + lateThreshold;
-
-        if(nowMinutes > thresholdMinutes){
-            el.classList.add('text-danger');
-            el.title = 'Waktu melewati batas terlambat (cek-in setelah ini akan dianggap terlambat)';
-        } else {
-            el.classList.remove('text-danger');
-            el.title = '';
-        }
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    // Filter/Search functionality
-    function filterTable() {
-        const rawSearchVal = document.getElementById('searchKaryawan').value.trim();
-        const searchVal = rawSearchVal.toLowerCase();
-        const dateVal = document.getElementById('filterDate').value;
-        const tableRows = document.querySelectorAll('table tbody tr');
-        let visibleCount = 0;
-
-        tableRows.forEach(row => {
-            // Skip empty row
-            if(row.textContent.includes('Belum ada data')) {
-                row.style.display = '';
-                return;
-            }
-
-            const cells = row.querySelectorAll('td');
-            if(cells.length < 9) return;
-
-            const nip = cells[0]?.textContent.toLowerCase().trim() || '';
-            const nama = cells[1]?.textContent.toLowerCase().trim() || '';
-            const tanggal = cells[2]?.textContent.trim() || '';
-            const statusBadge = cells[7]?.textContent.toLowerCase().trim() || '';
-
-            let matchSearch = true;
-            let matchDate = true;
-
-            // Search filter (NIP or Nama) - only if search has value
-            if(searchVal) {
-                // extract NIP and name by splitting at the first hyphen only
-                let sepIndex = rawSearchVal.indexOf('-');
-                let selNip = '';
-                let selName = '';
-                if (sepIndex > -1) {
-                    selNip = rawSearchVal.substring(0, sepIndex).toLowerCase().trim();
-                    selName = rawSearchVal.substring(sepIndex + 1).toLowerCase().trim();
-                } else {
-                    selNip = rawSearchVal.toLowerCase();
-                }
-                matchSearch = (selNip && nip.includes(selNip)) || (selName && nama.includes(selName)) || nama.includes(searchVal) || nip.includes(searchVal);
-            }
-
-            // Date filter - only if date is selected
-            if(dateVal) {
-                const parts = dateVal.split('-');
-                const searchDate = parts[2] + ' '; // day
-                matchDate = tanggal.includes(searchDate);
-            }
-
-            // Show row only if all filters match
-            const shouldShow = (matchSearch && matchDate);
-            row.style.display = shouldShow ? '' : 'none';
-            if(shouldShow) visibleCount++;
-        });
-
-        // Show search results message
-        const resultsDiv = document.getElementById('searchResults');
-        const resultsText = document.getElementById('searchResultsText');
-
-        let filterInfo = [];
-        if(searchVal) {
-            const sel = document.getElementById('searchKaryawan');
-            const selText = sel ? (sel.options[sel.selectedIndex]?.text || rawSearchVal) : rawSearchVal;
-            filterInfo.push(`Karyawan: <strong>${selText}</strong>`);
-        }
-        if(dateVal) filterInfo.push(`Tanggal: <strong>${dateVal}</strong>`);
-
-        if(searchVal || dateVal) {
-            if(resultsText) resultsText.innerHTML = `Ditemukan <strong>${visibleCount}</strong> hasil | ${filterInfo.join(' | ')}`;
-            if(resultsDiv) resultsDiv.classList.remove('d-none');
-        } else {
-            if(resultsDiv) resultsDiv.classList.add('d-none');
-        }
-    }
-
-    // Wait for DOM to be ready
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchSelect = document.getElementById('searchKaryawan');
-        const dateInput = document.getElementById('filterDate');
-        const searchBtn = document.getElementById('searchBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const baseUrl = "{{ route('absensi.index') }}";
-
-        // If the page was loaded with a date param (server-side search), enable reset
-        @if(request()->has('date') && request('date') != '')
-            if(resetBtn) resetBtn.disabled = false;
-        @endif
-
-        if(searchBtn) {
-            searchBtn.addEventListener('click', function() {
-                // allow form submission to occur, but enable reset so user can clear afterwards
-                if(resetBtn) resetBtn.disabled = false;
-                filterTable();
-            });
-        }
-
-        // Allow Enter key to trigger search
-        if(searchSelect) {
-            searchSelect.addEventListener('keypress', function(e) {
-                if(e.key === 'Enter') {
-                    if(resetBtn) resetBtn.disabled = false;
-                    filterTable();
-                }
-            });
-        }
-
-        // Auto-filter on date change
-        if(dateInput) {
-            dateInput.addEventListener('change', function() {
-                if(resetBtn) resetBtn.disabled = false;
-                filterTable();
-            });
-        }
-
-        // Reset button: clear search results and filters
-        if(resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                const resultsDiv = document.getElementById('searchResults');
-                const resultsText = document.getElementById('searchResultsText');
-
-                if(resultsDiv) {
-                    // Server-side results present: clear card content, hide card, clear inputs and remove query params from URL without reload
-                    if(searchSelect) searchSelect.value = '';
-                    if(dateInput) dateInput.value = '';
-                    try { resultsDiv.innerHTML = ''; } catch(e) { resultsDiv.style.display = 'none'; }
-                    if(resultsText) resultsText.innerHTML = '';
-                    try { history.replaceState(null, '', baseUrl); } catch(e) { /* ignore */ }
-                    if(resetBtn) resetBtn.disabled = true;
-                } else {
-                    // No server-side results -> perform client-side reset
-                    window.resetFilters();
-                }
-            });
-        }
-
-        // Expose a simple reset function (clears filters client-side without navigation)
-        window.resetFilters = function() {
-            if(searchSelect) searchSelect.value = '';
-            if(dateInput) dateInput.value = '';
-            filterTable();
-            if(resetBtn) resetBtn.disabled = true;
-        };
-    });
+    // Placeholder for future scripts if needed
+    // Any interactive JS for the Absensi index can be added here.
 </script>
 @endpush

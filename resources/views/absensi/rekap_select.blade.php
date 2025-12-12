@@ -14,13 +14,13 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="{{ route('absensi.rekap') }}" class="row g-2 align-items-end">
+            <form method="GET" action="{{ route('absensi.index') }}" class="row g-2 align-items-end">
                 <div class="col-md-6">
                     <label class="form-label">Pilih Karyawan</label>
-                    <select name="karyawan_id" class="form-select" required>
+                    <select name="rekap_karyawan_id" class="form-select" required>
                         <option value="">-- Pilih --</option>
                         @foreach($karyawans as $k)
-                            <option value="{{ $k->id_karyawan }}">{{ $k->nip }} - {{ $k->nama }}</option>
+                            <option value="{{ $k->id_karyawan }}" {{ request('rekap_karyawan_id') == $k->id_karyawan ? 'selected' : '' }}>{{ $k->nip }} - {{ $k->nama }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -39,7 +39,7 @@
                     <input type="number" name="year" value="{{ $year }}" class="form-control" />
                 </div>
                 <div class="col-md-1">
-                    <button class="btn btn-primary">Lihat</button>
+                    <button type="submit" class="btn btn-primary">Lihat Rekap</button>
                 </div>
             </form>
         </div>
