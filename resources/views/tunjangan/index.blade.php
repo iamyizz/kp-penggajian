@@ -21,12 +21,19 @@
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label fw-semibold text-muted">Periode Bulan</label>
-                    <input type="month" name="bulan" class="form-control rounded-pill"
-                        value="{{ $bulan }}">
+                    @php
+                        // Jika $bulan bernilai "2025-08"
+                        $bulanValue = $bulan;
+                    @endphp
+                    <input type="text" id="bulan_filter"
+                        class="form-control glass-input"
+                        placeholder="Pilih Bulan & Tahun"
+                        value="{{ $bulanValue }}"
+                        name="bulan">
                 </div>
 
                 <div class="col-md-2">
-                    <button class="btn btn-dark rounded-pill px-4 shadow-sm">
+                    <button class="btn btn-success rounded-pill px-4 shadow-sm">
                         <i class="bi bi-search me-1"></i> Filter
                     </button>
                 </div>
@@ -38,7 +45,7 @@
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
             <table class="table table-hover align-middle text-center mb-0">
-                <thead class="table-dark">
+                <thead class="table-success">
                     <tr>
                         <th>#</th>
                         <th>Nama</th>
@@ -167,7 +174,36 @@
             </table>
         </div>
     </div>
+    <!-- Modal Pilih Bulan Proses -->
+    <div class="modal fade" id="modalProses" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
 
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Proses Tunjangan
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <label class="form-label fw-semibold">Pilih Bulan & Tahun</label>
+                    <input type="text" id="bulan_tahun"
+                        class="form-control glass-input"
+                        placeholder="Pilih Bulan & Tahun"
+                        name="bulan">
+            </div>
+
+            <div class="modal-footer border-0">
+                <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                <button id="btnModalProses" class="btn btn-success rounded-pill px-4">Proses</button>
+            </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- Overlay Loading --}}
@@ -180,61 +216,91 @@
 </div>
 
 {{-- Script --}}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 <script>
-document.getElementById('btnProses').addEventListener('click', () => {
+    flatpickr("#bulan_filter", {
+        altInput: true,
+        altFormat: "F Y",
+        dateFormat: "Y-m",
+        plugins: [
+            new monthSelectPlugin({
+                shorthand: true,
+                dateFormat: "Y-m",
+                altFormat: "F Y"
+            })
+        ]
+    });
+    flatpickr("#bulan_tahun", {
+        altInput: true,
+        altFormat: "F Y",
+        dateFormat: "Y-m",
+        plugins: [
+            new monthSelectPlugin({
+                shorthand: true,
+                dateFormat: "Y-m",
+                altFormat: "F Y"
+            })
+        ]
+    });
 
-    const bulanInput = document.querySelector('input[name="bulan"]').value;
-
-    if (!bulanInput) {
-        return Swal.fire("Oops!", "Silakan pilih bulan dulu.", "warning");
+    function formatBulan(bln, tahun) {
+        const namaBulan = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+        return namaBulan[parseInt(bln) - 1] + " " + tahun;
     }
 
-    const [tahun, bulan] = bulanInput.split("-");
-
-    Swal.fire({
-        title: "Proses Tunjangan?",
-        text: `Proses tunjangan bulan ${bulan}-${tahun}?`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Ya, proses",
-        cancelButtonText: "Batal",
-        confirmButtonColor: '#198754',
-        cancelButtonColor: '#6c757d',
-        customClass: {
-            popup: 'rounded-4',
-            confirmButton: 'rounded-pill px-4',
-            cancelButton: 'rounded-pill px-4'
-        }
-    }).then(result => {
-        if (result.isConfirmed) {
-
-            document.getElementById('loadingOverlay').style.display = 'block';
-
-            fetch("{{ route('tunjangan.proses') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ bulan, tahun })
-            })
-            .then(res => res.json())
-            .then(res => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-
-                Swal.fire({
-                    icon: res.status ? "success" : "error",
-                    title: res.message,
-                    confirmButtonColor: '#198754',
-                    customClass: {
-                        popup: 'rounded-4',
-                        confirmButton: 'rounded-pill px-4'
-                    }
-                }).then(() => location.reload());
-            });
-        }
+    document.getElementById('btnProses').addEventListener('click', () => {
+        const modal = new bootstrap.Modal('#modalProses');
+        modal.show();
     });
-});
+    document.getElementById('btnModalProses').addEventListener('click', () => {
+        const bulanInput = document.getElementById('bulan_tahun').value;
+
+        if (!bulanInput) {
+            return Swal.fire("Oops!", "Silakan pilih bulan terlebih dahulu.", "warning");
+        }
+
+        const [tahun, bulan] = bulanInput.split("-");
+
+        Swal.fire({
+            title: "Proses Tunjangan?",
+            text: `Proses tunjangan bulan ${formatBulan(bulan, tahun)}?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Ya, proses",
+            cancelButtonText: "Batal",
+            confirmButtonColor: '#198754',
+            cancelButtonColor: '#6c757d'
+        }).then(result => {
+            if (result.isConfirmed) {
+
+                document.getElementById('loadingOverlay').style.display = 'block';
+
+                fetch("{{ route('tunjangan.proses') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ bulan, tahun })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+
+                    Swal.fire({
+                        icon: res.status ? "success" : "error",
+                        title: res.message,
+                    }).then(() => location.reload());
+                });
+            }
+        });
+
+    });
+
 </script>
 
 @endsection
