@@ -42,9 +42,35 @@ class KaryawanSeeder extends Seeder
                 'rekening_bank' => 'BRI 567890123',
                 'aktif' => true,
             ],
+
+            // Tambahan karyawan baru
+            [
+                'nama' => 'Agung Pratama',
+                'jabatan_id' => 2,
+                'tanggal_masuk' => '2023-07-12',
+                'status_karyawan' => 'Kontrak',
+                'rekening_bank' => 'BCA 1122334455',
+                'aktif' => true,
+            ],
+            [
+                'nama' => 'Linda Wulansari',
+                'jabatan_id' => 5,
+                'tanggal_masuk' => '2021-11-20',
+                'status_karyawan' => 'Tetap',
+                'rekening_bank' => 'Mandiri 2233445566',
+                'aktif' => true,
+            ],
+            [
+                'nama' => 'Bagas Setiawan',
+                'jabatan_id' => 6,
+                'tanggal_masuk' => '2024-04-01',
+                'status_karyawan' => 'Magang',
+                'rekening_bank' => 'BRI 987654321',
+                'aktif' => true,
+            ],
         ];
 
-        // Tambahkan NIP dengan format KLSM-0001, KLSM-0002, dst.
+        // Generate NIP otomatis
         foreach ($karyawans as $index => &$karyawan) {
             $number = str_pad($index + 1, 4, '0', STR_PAD_LEFT);
             $karyawan['nip'] = 'KLSM-' . $number;

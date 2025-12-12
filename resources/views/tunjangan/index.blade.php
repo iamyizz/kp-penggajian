@@ -225,8 +225,10 @@ document.getElementById('btnProses').addEventListener('click', () => {
                 Swal.fire({
                     icon: res.status ? "success" : "error",
                     title: res.message,
+                    confirmButtonColor: '#198754',
                     customClass: {
-                        popup: 'rounded-4'
+                        popup: 'rounded-4',
+                        confirmButton: 'rounded-pill px-4'
                     }
                 }).then(() => location.reload());
             });

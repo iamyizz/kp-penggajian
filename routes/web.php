@@ -10,6 +10,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ParameterPenggajianController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\TunjanganController;
+use App\Http\Controllers\BonusKehadiranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('tunjangan', TunjanganController::class)
         ->only(['index']);
+
+
+    // BONUS KEHADIRAN
+    Route::post('/bonus-proses', [BonusKehadiranController::class, 'proses'])
+        ->name('bonus.proses');
+
+    Route::resource('bonus', BonusKehadiranController::class)
+        ->only(['index']);
+
 });
 
 // ===========================

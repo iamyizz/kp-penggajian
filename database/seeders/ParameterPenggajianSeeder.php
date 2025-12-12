@@ -20,7 +20,7 @@ class ParameterPenggajianSeeder extends Seeder
             [
                 'nama_param' => 'Minimal Kehadiran untuk Bonus',
                 'key' => 'bonus_kehadiran_min_hadir',
-                'nilai' => 26,
+                'nilai' => 30,
                 'satuan' => 'Hari',
                 'keterangan' => 'Minimal hadir dalam sebulan untuk dapat bonus.'
             ],
@@ -41,7 +41,7 @@ class ParameterPenggajianSeeder extends Seeder
             [
                 'nama_param' => 'Potongan Telat Per Menit',
                 'key' => 'potongan_telat_per_menit',
-                'nilai' => 500,
+                'nilai' => 7500,
                 'satuan' => 'Rupiah/Menit',
                 'keterangan' => 'Potongan per menit keterlambatan.'
             ],
@@ -62,7 +62,7 @@ class ParameterPenggajianSeeder extends Seeder
             [
                 'nama_param' => 'Hari Kerja Normal',
                 'key' => 'hari_kerja_normal',
-                'nilai' => 26,
+                'nilai' => 30,
                 'satuan' => 'Hari',
                 'keterangan' => 'Jumlah hari kerja standar per bulan.'
             ]

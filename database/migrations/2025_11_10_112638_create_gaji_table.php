@@ -74,16 +74,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('bonus_karyawan', function (Blueprint $table) {
+        Schema::create('bonus_kehadiran', function (Blueprint $table) {
             $table->id('id_bonus');
             $table->foreignId('karyawan_id')->constrained('karyawan', 'id_karyawan')->onDelete('cascade');
-            $table->enum('jenis_bonus', ['kehadiran', 'shift_malam']);
             $table->unsignedTinyInteger('bulan');
             $table->year('tahun');
-            $table->decimal('jumlah', 12, 2);
-            $table->string('keterangan')->nullable();
+            $table->integer('total_hadir')->default(0);
+            $table->integer('total_izin')->default(0);
+            $table->integer('total_sakit')->default(0);
+            $table->integer('total_alpha')->default(0);
+            $table->integer('total_terlambat')->default(0);
+            $table->boolean('dapat_bonus')->default(false);
+            $table->decimal('nominal_bonus', 12, 2)->default(0);
             $table->timestamps();
         });
+
     }
 
     public function down(): void
