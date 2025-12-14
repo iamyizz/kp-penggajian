@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class KehadiranSeeder extends Seeder
 {
@@ -20,9 +21,13 @@ class KehadiranSeeder extends Seeder
         for ($i = 1; $i <= 7; $i++) { // 7 karyawan
             foreach ($months as $month) {
 
-                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, substr($month, 5, 2), substr($month, 0, 4));
+                $year     = substr($month, 0, 4);
+                $monthNum = substr($month, 5, 2);
+                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $monthNum, $year);
 
                 for ($d = 1; $d <= $daysInMonth; $d++) {
+
+                    $tanggal = Carbon::create($year, $monthNum, $d);
 
                     // Probabilitas status kehadiran
                     $rand = rand(1, 100);
@@ -38,26 +43,57 @@ class KehadiranSeeder extends Seeder
                     }
 
                     $entry = [
-                        'karyawan_id' => $i,
-                        'tanggal' => $month . "-" . str_pad($d, 2, '0', STR_PAD_LEFT),
+                        'karyawan_id'      => $i,
+                        'tanggal'          => $tanggal->format('Y-m-d'),
                         'status_kehadiran' => $status,
-                        'terlambat' => false,
-                        'lembur_jam' => 0,
+                        'terlambat'        => false,
+                        'lembur_jam'       => 0,
+                        'jam_masuk'        => null,
+                        'jam_keluar'       => null,
                     ];
 
                     if ($status === 'Hadir') {
-                        $entry['jam_masuk'] = '08:00:00';
-                        $entry['jam_keluar'] = '16:00:00';
+
+                        /** =====================
+                         * JAM MASUK
+                         * ===================== */
+                        $jamMasuk = Carbon::createFromTime(8, 0, 0);
 
                         // 15% kemungkinan terlambat
-                        $entry['terlambat'] = rand(1, 100) <= 15;
+                        $terlambat = rand(1, 100) <= 15;
 
-                        // 25% kemungkinan lembur
-                        $entry['lembur_jam'] = rand(1, 100) <= 25 ? rand(1, 3) : 0;
+                        if ($terlambat) {
+                            $jamMasuk->addMinutes(rand(5, 30));
+                        }
 
-                    } else {
-                        $entry['jam_masuk'] = null;
-                        $entry['jam_keluar'] = null;
+                        /** =====================
+                         * JAM KELUAR NORMAL
+                         * ===================== */
+                        $jamKeluar = (clone $jamMasuk)->addHours(8);
+
+                        /** =====================
+                         * LEMBUR (jika tidak terlambat)
+                         * ===================== */
+                        $lembur = false;
+                        if (!$terlambat && rand(1, 100) <= 20) {
+                            $lemburJam = rand(1, 3);
+                            $jamKeluar->addHours($lemburJam);
+                            $entry['lembur_jam'] = $lemburJam;
+                            $lembur = true;
+                        }
+
+                        /** =====================
+                         * PULANG CEPAT
+                         * (tidak boleh jika lembur)
+                         * ===================== */
+                        if (!$lembur && rand(1, 100) <= 15) {
+                            // Pulang cepat 15–90 menit
+                            $jamKeluar->subMinutes(rand(15, 90));
+                        }
+
+                        $entry['terlambat']  = $terlambat;
+                        $entry['jam_masuk']  = $jamMasuk->format('H:i:s');
+                        $entry['jam_keluar'] = $jamKeluar->format('H:i:s');
                     }
 
                     $kehadiran[] = $entry;

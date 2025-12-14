@@ -60,7 +60,7 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="alert alert-info">
-                    <strong>{{ $karyawan->nip }} - {{ $karyawan->nama }}</strong> | 
+                    <strong>{{ $karyawan->nip }} - {{ $karyawan->nama }}</strong> |
                     {{ \Carbon\Carbon::create()->month((int) $month)->locale('id')->translatedFormat('F') }} {{ $year }}
                 </div>
             </div>
@@ -175,7 +175,7 @@
                                             @php
                                                 $jamKeluar = \Carbon\Carbon::createFromFormat('H:i:s', $r->jam_keluar);
                                                 $scheduledEnd = \Carbon\Carbon::createFromFormat('H:i:s', $workEnd);
-                                                $early = $scheduledEnd->diffInMinutes($jamKeluar);
+                                                $early = $jamKeluar->diffInMinutes($scheduledEnd);
                                                 echo $early > 0 ? 'Ya' : 'Tidak';
                                             @endphp
                                         @else

@@ -43,7 +43,7 @@ class AbsensiController extends Controller
         $rekapKaryawanId = $request->input('rekap_karyawan_id');
         $month = $request->input('month', Carbon::now('Asia/Jakarta')->month);
         $year = $request->input('year', Carbon::now('Asia/Jakarta')->year);
-        
+
         $karyawan = null;
         $rekapRecords = collect();
         $rekapSummary = null;
@@ -81,12 +81,25 @@ class AbsensiController extends Controller
                     }
 
                     if ($r->jam_masuk) {
-                        $jamMasuk = Carbon::createFromFormat('H:i:s', $r->jam_masuk, 'Asia/Jakarta');
-                        $scheduledStart = Carbon::createFromFormat('H:i:s', $workStart, 'Asia/Jakarta');
-                        if ($jamMasuk->greaterThan($scheduledStart)) {
-                            $rekapSummary['terlambat_minutes'] += $jamMasuk->diffInMinutes($scheduledStart);
-                        }
+                        $tanggal = Carbon::parse($r->tanggal, 'Asia/Jakarta');
+
+                        $jamMasuk = Carbon::parse(
+                            $tanggal->format('Y-m-d') . ' ' . $r->jam_masuk,
+                            'Asia/Jakarta'
+                        );
+
+                        $scheduledStart = Carbon::parse(
+                            $tanggal->format('Y-m-d') . ' ' . config('attendance.work_start', '08:00:00'),
+                            'Asia/Jakarta'
+                        );
+
+                        // hitung selisih (boleh minus)
+                        $selisih = $scheduledStart->diffInMinutes($jamMasuk, false);
+
+                        // hanya tambahkan jika benar-benar terlambat
+                        $rekapSummary['terlambat_minutes'] += max(0, $selisih);
                     }
+
 
                     if ($r->jam_keluar) {
                         $jamKeluar = Carbon::createFromFormat('H:i:s', $r->jam_keluar, 'Asia/Jakarta');
@@ -253,11 +266,22 @@ class AbsensiController extends Controller
             }
 
             if ($r->jam_masuk) {
-                $jamMasuk = Carbon::createFromFormat('H:i:s', $r->jam_masuk, 'Asia/Jakarta');
-                $scheduledStart = Carbon::createFromFormat('H:i:s', $workStart->format('H:i:s'), 'Asia/Jakarta');
-                if ($jamMasuk->greaterThan($scheduledStart)) {
-                    $summary['terlambat_minutes'] += $jamMasuk->diffInMinutes($scheduledStart);
-                }
+                $tanggal = Carbon::parse($r->tanggal, 'Asia/Jakarta');
+
+                $jamMasuk = Carbon::parse(
+                    $tanggal->format('Y-m-d') . ' ' . $r->jam_masuk,
+                    'Asia/Jakarta'
+                );
+
+                $scheduledStart = Carbon::parse(
+                    $tanggal->format('Y-m-d') . ' ' . config('attendance.work_start', '08:00:00'),
+                    'Asia/Jakarta'
+                );
+
+                // hitung selisih (positif = terlambat, negatif = lebih awal)
+                $selisih = $jamMasuk->diffInMinutes($scheduledStart, false);
+
+
             }
 
             if ($r->jam_keluar) {
