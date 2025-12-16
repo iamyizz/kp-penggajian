@@ -71,9 +71,19 @@
 
     {{-- Tabel Data Gaji --}}
     <div class="card shadow-sm mt-4">
+        @php
+            use Carbon\Carbon;
+            Carbon::setLocale('id');
+        @endphp
+
         <div class="card-header">
-            <strong>Data Gaji Bulan {{ $bulan }} - {{ $tahun }}</strong>
+            <strong>
+                Data Gaji Bulan
+                {{ Carbon::create()->month($bulan)->translatedFormat('F') }}
+                {{ $tahun }}
+            </strong>
         </div>
+
 
         <div class="card-body table-responsive">
             <table class="table table-hover table-striped align-middle text-center mb-0">

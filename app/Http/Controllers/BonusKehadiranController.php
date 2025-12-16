@@ -25,6 +25,7 @@ class BonusKehadiranController extends Controller
         $data = BonusKehadiran::with('karyawan')
                     ->where('bulan', $bulan)
                     ->where('tahun', $tahun)
+                    ->orderBy('karyawan_id')
                     ->get();
 
         return view('bonus.index', [

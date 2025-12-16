@@ -18,10 +18,12 @@ class LaporanController extends Controller
         $bulanTahun = $request->get('bulan');
         if ($bulanTahun) {
             [$tahun, $bulan] = explode('-', $bulanTahun);
+            $bulan = (int) $bulan; // 🔑 WAJIB
+            $tahun = (int) $tahun;
         } else {
-            $bulan = date('m');
-            $tahun = date('Y');
-            $bulanTahun = "$tahun-$bulan";
+            $bulan = (int) date('m');
+            $tahun = (int) date('Y');
+            $bulanTahun = "$tahun-" . str_pad($bulan, 2, '0', STR_PAD_LEFT);
         }
 
 
@@ -76,6 +78,12 @@ class LaporanController extends Controller
                 'lembur_jam' => $absensi->sum('lembur_jam'),
             ];
         }
+
+            // ================= NAMA BULAN UNTUK VIEW =================
+            \Carbon\Carbon::setLocale('id');
+
+            $bulanNama = \Carbon\Carbon::createFromDate($tahun, $bulan, 1)
+                ->translatedFormat('F');
 
 
         return view('laporan.index', compact(

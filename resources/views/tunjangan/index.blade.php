@@ -79,13 +79,13 @@
                         <td>
                             <button class="btn btn-sm btn-outline-success rounded-pill px-3"
                                 data-bs-toggle="modal"
-                                data-bs-target="#detail{{ $item->id }}">
+                                data-bs-target="#detail{{ $item->id_tkm }}">
                                 <i class="bi bi-info-circle"></i> Detail
                             </button>
                         </td>
                     </tr>
                     <!-- Modal Detail -->
-                    <div class="modal fade" id="detail{{ $item->id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal fade" id="detail{{ $item->id_tkm }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content border-0 shadow-lg rounded-4">
 
