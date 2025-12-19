@@ -163,8 +163,8 @@
                                                 $jamMasuk = \Carbon\Carbon::createFromFormat('H:i:s', $r->jam_masuk);
                                                 $scheduledStart = \Carbon\Carbon::createFromFormat('H:i:s', $workStart);
                                                 $diff = $scheduledStart->diffInMinutes($jamMasuk);
-                                                echo $diff > 0 ? $diff : 0;
                                             @endphp
+                                            {{ $diff }} Menit
                                         @else
                                             -
                                         @endif

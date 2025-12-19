@@ -75,12 +75,6 @@
                     <i class="bi bi-calendar-check me-2"></i> Data Absensi
                 </a>
             </li>
-            <li class="nav-item mb-1">
-                <a href="{{ route('profil') }}"
-                   class="nav-link d-flex align-items-center {{ request()->is('profil') ? 'active bg-success text-white' : 'text-dark' }}">
-                    <i class="bi bi-person-circle me-2"></i> Profil
-                </a>
-            </li>
         @endif
     </ul>
 </aside>
