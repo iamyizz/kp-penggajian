@@ -102,7 +102,7 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <p class="small text-muted mb-1">Total Terlambat (count)</p>
-                        <h5>{{ $rekapSummary['terlambat_count'] }}</h5>
+                        <h5>{{ $rekapSummary['terlambat_count'] }} kali</h5>
                     </div>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <p class="small text-muted mb-1">Total Terlambat (menit)</p>
-                        <h5>{{ $rekapSummary['terlambat_minutes'] }}</h5>
+                        <h5>{{ $rekapSummary['terlambat_minutes'] }} menit</h5>
                     </div>
                 </div>
             </div>
@@ -164,12 +164,12 @@
                                                 $scheduledStart = \Carbon\Carbon::createFromFormat('H:i:s', $workStart);
                                                 $diff = $scheduledStart->diffInMinutes($jamMasuk);
                                             @endphp
-                                            {{ $diff }} Menit
+                                            {{ $diff }} menit
                                         @else
                                             -
                                         @endif
                                     </td>
-                                    <td>{{ $r->lembur_jam ?? 0 }}</td>
+                                    <td>{{ round($r->lembur_jam ?? 0) }} jam</td>
                                     <td>
                                         @if($r->jam_keluar)
                                             @php
