@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Administrator',
             'email' => 'admin@samara.test',
-            'password' => Hash::make('password123'), // ganti jika perlu
+            'password' => Hash::make('password123'),
             'role' => 'admin',
         ]);
 
@@ -27,6 +27,14 @@ class UserSeeder extends Seeder
             'email' => 'koorabsen@samara.test',
             'password' => Hash::make('password123'),
             'role' => 'koor_absen',
+        ]);
+
+        // Koor Owner
+        User::create([
+            'name' => 'Owner Name',
+            'email' => 'owner@samara.test',
+            'password' => Hash::make('password123'),
+            'role' => 'owner',
         ]);
     }
 }

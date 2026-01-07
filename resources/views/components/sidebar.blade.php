@@ -27,12 +27,6 @@
                 </a>
             </li>
             <li class="nav-item mb-1">
-                <a href="{{ route('absensi.index') }}"
-                class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
-                <i class="bi bi-calendar-check me-2"></i> Absensi
-                </a>
-            </li>
-            <li class="nav-item mb-1">
                 <a href="{{ route('parameter.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('parameter.index') ? 'active bg-success text-white' : 'text-dark' }}">
                     <i class="bi bi-gear me-2"></i> Parameter Penggajian
@@ -73,6 +67,28 @@
                 <a href="{{ route('absensi.index') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('absensi.*') ? 'active bg-success text-white' : 'text-dark' }}">
                     <i class="bi bi-calendar-check me-2"></i> Data Absensi
+                </a>
+            </li>
+        @elseif (Auth::user()->role === 'owner')
+            {{-- Approval Penggajian --}}
+            <li class="nav-item mb-1">
+                <a class="nav-link d-flex align-items-center {{ request()->routeIs('laporan.approvePage') ? 'active bg-success text-white' : 'text-dark' }}"
+                href="{{ route('laporan.approvePage') }}">
+                    <i class="bi bi-check2-square me-2"></i>
+                    Approval Penggajian
+
+                    @php
+                        // Hitung jumlah periode (bulan-tahun) yang belum di-approve
+                        $pendingCount = \App\Models\Penggajian::where('is_approved', false)
+                            ->select('periode_bulan', 'periode_tahun')
+                            ->groupBy('periode_bulan', 'periode_tahun')
+                            ->get()
+                            ->count();
+                    @endphp
+
+                    @if($pendingCount > 0)
+                        <span class="badge bg-warning text-dark ms-auto">{{ $pendingCount }}</span>
+                    @endif
                 </a>
             </li>
         @endif

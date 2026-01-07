@@ -54,11 +54,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->only(['index', 'show'])
         ->middleware(['auth','role:admin']); // sesuaikan middleware
 
-    // Halaman laporan
+    // Routes Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
-    // Ajax detail slip gaji (modal)
+    // Detail Periode Laporan (untuk melihat data per karyawan pada periode tertentu)
+    Route::get('/laporan/{tahun}/{bulan}', [LaporanController::class, 'periodeDetail'])
+        ->whereNumber('tahun')
+        ->whereNumber('bulan')
+        ->name('laporan.periodeDetail');
+    // Slip PDF
     Route::get('/laporan/slip/{id}', [LaporanController::class, 'slipPdf'])->name('laporan.slipPdf');
+
 
 
     // Absensi routes (admin dapat akses)
@@ -96,6 +102,31 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:koor_absen'])->group(function () {
     Route::resource('absensi', AbsensiController::class);
     Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
+});
+
+// Routes Laporan (Owner only untuk approve)
+Route::middleware(['auth', 'role:owner'])->prefix('laporan')->group(function () {
+
+    // Halaman Daftar Periode yang Perlu di-Approve
+    Route::get('/approve', [LaporanController::class, 'approvePage'])->name('laporan.approvePage');
+
+    // ✅ TAMBAHKAN INI - Detail Periode untuk Owner
+    Route::get('/{tahun}/{bulan}/detail', [LaporanController::class, 'periodeDetail'])
+        ->whereNumber('tahun')
+        ->whereNumber('bulan')
+        ->name('laporan.detail');
+
+    // Proses Approve Periode
+    Route::post('/{tahun}/{bulan}/approve', [LaporanController::class, 'approvePeriode'])
+        ->whereNumber('tahun')
+        ->whereNumber('bulan')
+        ->name('laporan.approvePeriode');
+
+    // Proses Reject/Batalkan Approve (opsional)
+    Route::post('/{tahun}/{bulan}/reject', [LaporanController::class, 'rejectPeriode'])
+        ->whereNumber('tahun')
+        ->whereNumber('bulan')
+        ->name('laporan.rejectPeriode');
 });
 
 // Route bawaan Breeze (login, register, dll)

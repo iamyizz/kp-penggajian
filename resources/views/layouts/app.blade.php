@@ -33,13 +33,38 @@
         <!-- Header -->
         <header class="bg-white border-bottom shadow-sm p-3">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h5 mb-0">Dashboard</h1>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="text-muted small">👋 {{ Auth::user()->name }}</span>
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-link text-danger p-0">Logout</button>
-                    </form>
+                <h1 class="h5 mb-0"></h1>
+
+                <!-- User Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-light d-flex align-items-center gap-2 rounded-pill px-3"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 32px; height: 32px; font-size: 14px;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <span class="text-dark small fw-medium">{{ Auth::user()->name }}</span>
+                        <i class="bi bi-chevron-down small"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li>
+                            <div class="dropdown-item-text">
+                                <div class="fw-semibold">{{ Auth::user()->name }}</div>
+                                <small class="text-muted">{{ ucfirst(str_replace('_', ' ', Auth::user()->role)) }}</small>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </header>

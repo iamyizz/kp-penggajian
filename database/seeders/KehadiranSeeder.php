@@ -12,34 +12,49 @@ class KehadiranSeeder extends Seeder
     {
         $kehadiran = [];
 
+        // ✅ Karyawan teladan (khusus Januari 2026)
+        $karyawanTeladanId = 1;
+
         $months = [
             '2025-10',
             '2025-11',
-            '2025-12'
+            '2025-12',
+            '2026-01',
         ];
 
-        for ($i = 1; $i <= 7; $i++) { // 7 karyawan
-            foreach ($months as $month) {
+        foreach ($months as $month) {
 
-                $year     = substr($month, 0, 4);
-                $monthNum = substr($month, 5, 2);
-                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $monthNum, $year);
+            $year     = (int) substr($month, 0, 4);
+            $monthNum = (int) substr($month, 5, 2);
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $monthNum, $year);
 
+            // Flag: apakah ini Januari 2026?
+            $isJanuari2026 = ($year === 2026 && $monthNum === 1);
+
+            for ($i = 1; $i <= 7; $i++) { // 7 karyawan
                 for ($d = 1; $d <= $daysInMonth; $d++) {
 
                     $tanggal = Carbon::create($year, $monthNum, $d);
 
-                    // Probabilitas status kehadiran
-                    $rand = rand(1, 100);
-
-                    if ($rand <= 85) {
+                    // =====================
+                    // STATUS KEHADIRAN
+                    // =====================
+                    if ($isJanuari2026 && $i === $karyawanTeladanId) {
+                        // ✅ Khusus Januari 2026: selalu hadir
                         $status = 'Hadir';
-                    } elseif ($rand <= 90) {
-                        $status = 'Izin';
-                    } elseif ($rand <= 97) {
-                        $status = 'Sakit';
                     } else {
-                        $status = 'Alpa';
+                        // Random untuk selain itu
+                        $rand = rand(1, 100);
+
+                        if ($rand <= 85) {
+                            $status = 'Hadir';
+                        } elseif ($rand <= 90) {
+                            $status = 'Izin';
+                        } elseif ($rand <= 97) {
+                            $status = 'Sakit';
+                        } else {
+                            $status = 'Alpa';
+                        }
                     }
 
                     $entry = [
@@ -54,26 +69,25 @@ class KehadiranSeeder extends Seeder
 
                     if ($status === 'Hadir') {
 
-                        /** =====================
-                         * JAM MASUK
-                         * ===================== */
                         $jamMasuk = Carbon::createFromTime(8, 0, 0);
 
-                        // 15% kemungkinan terlambat
-                        $terlambat = rand(1, 100) <= 15;
-
-                        if ($terlambat) {
-                            $jamMasuk->addMinutes(rand(5, 30));
+                        // =====================
+                        // TERLAMBAT
+                        // =====================
+                        if ($isJanuari2026 && $i === $karyawanTeladanId) {
+                            // ✅ Khusus Januari 2026: tidak pernah terlambat
+                            $terlambat = false;
+                        } else {
+                            // 15% kemungkinan terlambat
+                            $terlambat = rand(1, 100) <= 15;
+                            if ($terlambat) {
+                                $jamMasuk->addMinutes(rand(5, 30));
+                            }
                         }
 
-                        /** =====================
-                         * JAM KELUAR NORMAL
-                         * ===================== */
                         $jamKeluar = (clone $jamMasuk)->addHours(8);
 
-                        /** =====================
-                         * LEMBUR (jika tidak terlambat)
-                         * ===================== */
+                        // Lembur (jika tidak terlambat)
                         $lembur = false;
                         if (!$terlambat && rand(1, 100) <= 20) {
                             $lemburJam = rand(1, 3);
@@ -82,12 +96,8 @@ class KehadiranSeeder extends Seeder
                             $lembur = true;
                         }
 
-                        /** =====================
-                         * PULANG CEPAT
-                         * (tidak boleh jika lembur)
-                         * ===================== */
+                        // Pulang cepat (tidak boleh jika lembur)
                         if (!$lembur && rand(1, 100) <= 15) {
-                            // Pulang cepat 15–90 menit
                             $jamKeluar->subMinutes(rand(15, 90));
                         }
 
