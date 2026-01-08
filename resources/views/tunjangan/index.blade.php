@@ -52,9 +52,9 @@
                         <th>Jabatan</th>
                         <th>Total Hadir</th>
                         <th>Total Terlambat</th>
-                        <th>Tunjangan Harian</th>
+                        <th>Subtotal Tunjangan</th>
                         <th>Potongan</th>
-                        <th>Total</th>
+                        <th>Total Tunjangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
