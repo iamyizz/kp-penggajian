@@ -27,10 +27,15 @@ class BonusKehadiranController extends Controller
                     ->where('tahun', $tahun)
                     ->orderBy('karyawan_id')
                     ->get();
+        // flag: sudah diproses untuk periode ini?
+        $sudahDiproses = BonusKehadiran::where('bulan', (int)$bulan)
+            ->where('tahun', (int)$tahun)
+            ->exists();
 
         return view('bonus.index', [
             'data' => $data,
             'bulan' => $bulanTahun,
+            'sudahDiproses' => $sudahDiproses,
         ]);
     }
 
@@ -38,6 +43,14 @@ class BonusKehadiranController extends Controller
     {
         $bulan = $req->bulan;
         $tahun = $req->tahun;
+
+        // cek apakah sudah diproses sebelumnya
+        if (BonusKehadiran::where('bulan', $bulan)->where('tahun', $tahun)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda sudah memproses Bonus bulan ini.'
+            ], 409);
+        }
 
         if (! $bulan || ! $tahun) {
             return response()->json(['status' => false, 'message' => 'Bulan/tahun wajib dikirim.']);
