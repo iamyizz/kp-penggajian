@@ -92,9 +92,16 @@ Route::middleware(['auth', 'role:manajer'])->group(function () {
 // 🧾 KOOR ABSEN ONLY
 // ===========================
 Route::middleware(['auth', 'role:staf_absen'])->group(function () {
+
+    // ⬇️ Custom routes HARUS DI ATAS resource
+    Route::get('/absensi/template', [AbsensiController::class, 'downloadTemplate'])->name('absensi.template');
+    Route::post('/absensi/import', [AbsensiController::class, 'import'])->name('absensi.import');
+    Route::get('/absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
+
+    // ⬇️ Resource route DI BAWAH
     Route::resource('absensi', AbsensiController::class);
-    Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 });
+
 
 // ===========================
 // 📄 SLIP PDF (Manajer & Direktur)

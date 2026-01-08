@@ -8,8 +8,38 @@
             <h2 class="mb-0">Rekap Absensi Bulanan</h2>
             <p class="small text-muted">Pilih karyawan dan bulan untuk melihat ringkasan absensi.</p>
         </div>
-        <div>
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahDataModal">Tambah Data</button>
+        <!-- Button trigger for Import -->
+        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#importAbsensiModal">
+            Import Excel
+        </button>
+
+        <a href="{{ route('absensi.template') }}" class="btn btn-outline-secondary btn-sm">
+            Download Template
+        </a>
+
+        <!-- Modal Import Absensi -->
+        <div class="modal fade" id="importAbsensiModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="POST" action="{{ route('absensi.import') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title">Import Data Absensi</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">File Excel (.xlsx atau .csv)</label>
+                                <input type="file" name="file" class="form-control" accept=".xlsx,.csv" required />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">Import</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -6,6 +6,8 @@ use App\Models\Kehadiran;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AbsensiImport;
 
 class AbsensiController extends Controller
 {
@@ -406,5 +408,41 @@ class AbsensiController extends Controller
         $attendance->delete();
 
         return back()->with('success', 'Data absensi berhasil dihapus.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv',
+        ]);
+        try {
+            Excel::import(new AbsensiImport, $request->file('file'));
+            return back()->with('success', 'Import data absensi berhasil.');
+        } catch (\Exception $e) {
+            return back()->with('warning', 'Terjadi kesalahan saat mengimport: '.$e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = ['nip', 'tanggal', 'status_kehadiran', 'jam_masuk', 'jam_keluar', 'terlambat', 'lembur_jam'];
+
+        $callback = function() use ($headers) {
+            $file = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($file, $headers);
+
+            // Contoh data dengan format YYYY-MM-DD
+            fputcsv($file, ['KLSM-0001', '2024-06-03', 'Hadir', '08:00:00', '17:00:00', '0', '0.00']);
+            fputcsv($file, ['KLSM-0001', '2024-06-04', 'Izin', '', '', '0', '0.00']);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="template_absensi.csv"',
+        ]);
     }
 }
