@@ -56,7 +56,7 @@ class TunjanganController extends Controller
                 'message' => 'Bulan dan tahun tidak diterima.'
             ]);
         }
-        
+
         // cek apakah sudah diproses sebelumnya
         if (TunjanganKehadiranMakan::where('bulan', $bulan)->where('tahun', $tahun)->exists()) {
             return response()->json([
@@ -104,9 +104,13 @@ class TunjanganController extends Controller
             );
         }
 
+        // Format: YYYY-MM untuk redirect filter
+        $redirectFilter = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT);
+
         return response()->json([
             'status' => true,
-            'message' => 'Tunjangan berhasil diproses!'
+            'message' => 'Tunjangan berhasil diproses!',
+            'redirect_filter' => $redirectFilter
         ]);
     }
 }

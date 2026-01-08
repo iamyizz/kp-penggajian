@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container mt-4">
 
     {{-- HEADER --}}
@@ -9,7 +10,6 @@
             <h2 class="fw-bold text-success mb-0">💰 Penggajian Karyawan</h2>
             <p class="text-muted small mb-0">Perhitungan gaji lengkap berdasarkan data jabatan, tunjangan & potongan</p>
         </div>
-
         <button id="btnProsesGaji"
             class="btn btn-success shadow-sm px-4 rounded-pill">
             <i class="bi bi-calculator me-1"></i> Proses Penggajian
@@ -20,26 +20,18 @@
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
-
                 <div class="col-md-3">
                     <label class="form-label fw-semibold">Bulan</label>
-                    @php
-                        // Jika $bulan bernilai "2025-08"
-                        $bulanValue = $bulan;
-                    @endphp
                     <input type="text" id="bulan_filter" class="form-control"
                         placeholder="Pilih Bulan & Tahun"
                         name="bulan"
-                        value="{{ $bulanValue }}">
-
+                        value="{{ $bulan ?? '' }}">
                 </div>
-
                 <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-success px-4 shadow-sm rounded-pill">
                         <i class="bi bi-search"></i> Filter
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
@@ -61,175 +53,171 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @forelse ($data as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->karyawan->nama }}</td>
-                        <td>{{ $item->karyawan->jabatan->nama_jabatan }}</td>
-
+                        <td>{{ $item->karyawan->jabatan->nama_jabatan ?? '-' }}</td>
                         <td>Rp {{ number_format($item->gaji_pokok) }}</td>
                         <td>
                             Rp {{ number_format(
                                 $item->tunjangan_jabatan +
                                 $item->tunjangan_kehadiran_makan
-                                ) }}
+                            ) }}
                         </td>
                         <td>Rp {{ number_format($item->lembur) }}</td>
-
                         <td class="fw-bold text-danger">
                             Rp {{ number_format(
                                 $item->potongan_absen +
                                 $item->potongan_bpjs
                             ) }}
                         </td>
-
                         <td class="fw-bold text-success">
                             Rp {{ number_format($item->total_gaji) }}
                         </td>
-
                         <td>
                             <button class="btn btn-sm btn-outline-success rounded-pill px-3"
                                 data-bs-toggle="modal"
-                                data-bs-target="#detail{{ $item->id_penggajian }}">
+                                data-bs-target="#detail{{ $item->id }}">
                                 <i class="bi bi-info-circle"></i> Detail
                             </button>
                         </td>
                     </tr>
 
                     {{-- DETAIL MODAL --}}
-                    <div class="modal fade" id="detail{{ $item->id_penggajian }}" tabindex="-1">
+                    <div class="modal fade" id="detail{{ $item->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow-lg border-0">
-
                                 <div class="modal-header bg-success text-white">
                                     <h5 class="modal-title">Detail Penggajian</h5>
                                     <button type="button" class="btn-close btn-close-white"
                                         data-bs-dismiss="modal"></button>
                                 </div>
-
                                 <div class="modal-body">
-
                                     <h5 class="mb-1">{{ $item->karyawan->nama }}</h5>
-                                    <small class="text-muted">{{ $item->karyawan->jabatan->nama_jabatan }}</small>
-
+                                    <small class="text-muted">{{ $item->karyawan->jabatan->nama_jabatan ?? '-' }}</small>
                                     <div class="row g-3 mt-3">
-
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Gaji Pokok</small>
                                                 <h5>Rp {{ number_format($item->gaji_pokok) }}</h5>
                                             </div>
                                         </div>
-
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Tunjangan Jabatan</small>
                                                 <h5>Rp {{ number_format($item->tunjangan_jabatan) }}</h5>
                                             </div>
                                         </div>
-
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Tunjangan Kehadiran</small>
                                                 <h5>Rp {{ number_format($item->tunjangan_kehadiran_makan) }}</h5>
                                             </div>
                                         </div>
-
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Lembur</small>
                                                 <h5>Rp {{ number_format($item->lembur) }}</h5>
                                             </div>
                                         </div>
-
+                                        <div class="col-6">
+                                            <div class="p-3 border rounded bg-light">
+                                                <small class="text-muted">Bonus</small>
+                                                <h5>Rp {{ number_format($item->bonus ?? 0) }}</h5>
+                                            </div>
+                                        </div>
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Potongan Absen</small>
-                                                <h5>Rp {{ number_format($item->potongan_absen) }}</h5>
+                                                <h5 class="text-danger">Rp {{ number_format($item->potongan_absen) }}</h5>
                                             </div>
                                         </div>
-
                                         <div class="col-6">
                                             <div class="p-3 border rounded bg-light">
                                                 <small class="text-muted">Potongan BPJS</small>
-                                                <h5>Rp {{ number_format($item->potongan_bpjs) }}</h5>
+                                                <h5 class="text-danger">Rp {{ number_format($item->potongan_bpjs) }}</h5>
                                             </div>
                                         </div>
-
+                                        <div class="col-6">
+                                            <div class="p-3 border rounded bg-light">
+                                                <small class="text-muted">Total Potongan</small>
+                                                <h5 class="text-danger">Rp {{ number_format($item->potongan_absen + $item->potongan_bpjs) }}</h5>
+                                            </div>
+                                        </div>
                                     </div>
-
                                     <div class="mt-4 p-3 rounded bg-success text-white">
-                                        <small>Total Gaji</small>
+                                        <small>Total Gaji Bersih</small>
                                         <h3 class="mb-0">Rp {{ number_format($item->total_gaji) }}</h3>
                                     </div>
-
                                 </div>
-
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                     @empty
                     <tr>
-                        <td colspan="8" class="text-muted py-4">
+                        <td colspan="9" class="text-muted py-4">
                             <i class="bi bi-inboxes fs-3"></i>
-                            <div class="mt-2">Belum ada data penggajian.</div>
+                            <div class="mt-2">Belum ada data penggajian untuk periode ini.</div>
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
-
             </table>
         </div>
     </div>
 
-    {{-- MODAL PROSES --}}
+    {{-- MODAL PROSES PENGGAJIAN --}}
     <div class="modal fade" id="modalProsesGaji" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
-
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Proses Penggajian</h5>
+                    <h5 class="modal-title"><i class="bi bi-calculator me-2"></i>Proses Penggajian</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
                     <label class="form-label fw-semibold">Pilih Bulan & Tahun</label>
                     <input type="text" id="bulan_tahun"
-                        class="form-control glass-input"
+                        class="form-control"
                         placeholder="Pilih Bulan & Tahun">
+                    <small class="text-muted mt-2 d-block">
+                        <i class="bi bi-info-circle"></i> Pastikan data kehadiran sudah lengkap sebelum memproses.
+                    </small>
                 </div>
-
                 <div class="modal-footer border-0">
                     <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                     <button id="btnModalProsesGaji" class="btn btn-primary rounded-pill px-4">
-                        Proses
+                        <i class="bi bi-check-circle me-1"></i> Proses
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
+
 </div>
 
 {{-- OVERLAY LOADING --}}
 <div id="loadingOverlay"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9999;backdrop-filter:blur(3px);">
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;backdrop-filter:blur(4px);">
     <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
         <div class="spinner-border" style="width:4rem;height:4rem;"></div>
-        <p class="mt-3 fs-5">Memproses...</p>
+        <p class="mt-3 fs-5 fw-semibold">Memproses Penggajian...</p>
+        <small>Mohon tunggu sebentar</small>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
 <script>
+    // Flatpickr untuk filter bulan
     flatpickr("#bulan_filter", {
         altInput: true,
         altFormat: "F Y",
         dateFormat: "Y-m",
+        defaultDate: "{{ $bulan ?? '' }}",
         plugins: [
             new monthSelectPlugin({
                 shorthand: true,
@@ -239,6 +227,7 @@
         ]
     });
 
+    // Flatpickr untuk modal proses penggajian
     flatpickr("#bulan_tahun", {
         altInput: true,
         altFormat: "F Y",
@@ -252,6 +241,7 @@
         ]
     });
 
+    // Helper: Format bulan ke nama Indonesia
     function formatBulan(bln, tahun) {
         const namaBulan = [
             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -260,53 +250,105 @@
         return namaBulan[parseInt(bln) - 1] + " " + tahun;
     }
 
-    // buka modal proses
-    document.getElementById('btnProsesGaji').onclick = () => {
-        new bootstrap.Modal('#modalProsesGaji').show();
-    };
+    // Buka modal proses penggajian
+    document.getElementById('btnProsesGaji').addEventListener('click', function() {
+        new bootstrap.Modal(document.getElementById('modalProsesGaji')).show();
+    });
 
-    // proses penggajian
-    document.getElementById('btnModalProsesGaji').onclick = () => {
+    // Proses penggajian dengan auto-filter redirect
+    document.getElementById('btnModalProsesGaji').addEventListener('click', function() {
+        const fpElement = document.querySelector("#bulan_tahun");
+        const fp = fpElement._flatpickr;
 
-        const fp = document.querySelector("#bulan_tahun")._flatpickr;
+        if (!fp) {
+            return Swal.fire("Oops!", "Picker tidak ditemukan!", "error");
+        }
 
-        if (!fp) return Swal.fire("Oops!", "Picker tidak ditemukan!", "error");
+        const raw = fp.input.value; // format Y-m -> contoh: 2025-08
 
-        const raw = fp.input.value;  // format Y-m -> contoh: 2025-08
-
-        if (!raw) return Swal.fire("Oops!", "Pilih bulan dahulu!", "warning");
+        if (!raw) {
+            return Swal.fire("Oops!", "Pilih bulan terlebih dahulu!", "warning");
+        }
 
         const [tahun, bulan] = raw.split('-');
 
         Swal.fire({
             title: "Proses Penggajian?",
-            text: `Proses gaji bulan ${formatBulan(bulan, tahun)}?`,
+            html: `Anda akan memproses penggajian untuk periode:<br><strong>${formatBulan(bulan, tahun)}</strong>`,
             icon: "question",
             showCancelButton: true,
-            confirmButtonColor: "#0d6efd"
-        }).then(res => {
-            if (!res.isConfirmed) return;
+            confirmButtonColor: "#198754",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Ya, Proses!",
+            cancelButtonText: "Batal"
+        }).then(result => {
+            if (!result.isConfirmed) return;
 
+            // Tutup modal
+            bootstrap.Modal.getInstance(document.getElementById('modalProsesGaji')).hide();
+
+            // Tampilkan loading overlay
             document.getElementById('loadingOverlay').style.display = "block";
 
+            // Kirim request proses penggajian
             fetch("{{ route('penggajian.proses') }}", {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
-                body: JSON.stringify({ bulan, tahun })
+                body: JSON.stringify({
+                    bulan: bulan,
+                    tahun: tahun
+                })
             })
-            .then(r => r.json())
-            .then(r => {
+            .then(response => response.json())
+            .then(data => {
+                // Sembunyikan loading overlay
                 document.getElementById('loadingOverlay').style.display = "none";
+
+                if (data.status) {
+                    // Sukses - tampilkan pesan dan redirect dengan auto-filter
+                    Swal.fire({
+                        icon: "success",
+                        title: "Berhasil!",
+                        text: data.message,
+                        confirmButtonColor: "#198754"
+                    }).then(() => {
+                        // ✅ Auto-filter: redirect ke halaman dengan parameter bulan yang diproses
+                        if (data.redirect_filter) {
+                            window.location.href = "{{ route('penggajian.index') }}?bulan=" + data.redirect_filter;
+                        } else {
+                            // Fallback: gunakan bulan yang dipilih user
+                            const filterBulan = `${tahun}-${bulan.padStart(2, '0')}`;
+                            window.location.href = "{{ route('penggajian.index') }}?bulan=" + filterBulan;
+                        }
+                    });
+                } else {
+                    // Gagal - tampilkan pesan error
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: data.message,
+                        confirmButtonColor: "#dc3545"
+                    });
+                }
+            })
+            .catch(error => {
+                // Sembunyikan loading overlay
+                document.getElementById('loadingOverlay').style.display = "none";
+
+                console.error('Error:', error);
+
                 Swal.fire({
-                    icon: r.status ? "success" : "error",
-                    title: r.message,
-                }).then(() => location.reload());
+                    icon: "error",
+                    title: "Terjadi Kesalahan!",
+                    text: "Tidak dapat terhubung ke server. Silakan coba lagi.",
+                    confirmButtonColor: "#dc3545"
+                });
             });
         });
-    };
+    });
 </script>
-
 @endsection

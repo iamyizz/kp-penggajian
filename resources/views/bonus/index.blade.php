@@ -262,7 +262,6 @@
     });
 
     document.getElementById('btnModalProsesBonus').addEventListener('click', () => {
-
         const bulanInput = document.getElementById('bulan_tahun').value;
 
         if (!bulanInput) {
@@ -279,9 +278,8 @@
             confirmButtonText: "Ya, proses",
             cancelButtonText: "Batal",
             confirmButtonColor: "#198754"
-        }).then(res => {
-            if (res.isConfirmed) {
-
+        }).then(result => {
+            if (result.isConfirmed) {
                 document.getElementById('loadingOverlay').style.display = 'block';
 
                 fetch("{{ route('bonus.proses') }}", {
@@ -292,19 +290,30 @@
                     },
                     body: JSON.stringify({ bulan, tahun })
                 })
-                .then(r => r.json())
-                .then(r => {
+                .then(res => res.json())
+                .then(res => {
                     document.getElementById('loadingOverlay').style.display = 'none';
 
                     Swal.fire({
-                        icon: r.status ? "success" : "error",
-                        title: r.message,
+                        icon: res.status ? "success" : "error",
+                        title: res.status ? "Berhasil!" : "Gagal",
+                        text: res.message,
                         confirmButtonColor: '#198754',
-                    }).then(() => location.reload());
+                    }).then(() => {
+                        // ✅ Auto-filter: redirect dengan parameter bulan
+                        if (res.status && res.redirect_filter) {
+                            window.location.href = "{{ route('bonus.index') }}?bulan=" + res.redirect_filter;
+                        } else {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(err => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    Swal.fire("Error!", "Terjadi kesalahan saat memproses.", "error");
                 });
             }
         });
-
     });
 </script>
 @endsection

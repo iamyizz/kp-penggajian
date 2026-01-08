@@ -256,6 +256,7 @@
         const modal = new bootstrap.Modal('#modalProses');
         modal.show();
     });
+
     document.getElementById('btnModalProses').addEventListener('click', () => {
         const bulanInput = document.getElementById('bulan_tahun').value;
 
@@ -276,7 +277,6 @@
             cancelButtonColor: '#6c757d'
         }).then(result => {
             if (result.isConfirmed) {
-
                 document.getElementById('loadingOverlay').style.display = 'block';
 
                 fetch("{{ route('tunjangan.proses') }}", {
@@ -293,12 +293,23 @@
 
                     Swal.fire({
                         icon: res.status ? "success" : "error",
-                        title: res.message,
-                    }).then(() => location.reload());
+                        title: res.status ? "Berhasil!" : "Gagal",
+                        text: res.message,
+                    }).then(() => {
+                        // ✅ Auto-filter: redirect dengan parameter bulan
+                        if (res.status && res.redirect_filter) {
+                            window.location.href = "{{ route('tunjangan.index') }}?bulan=" + res.redirect_filter;
+                        } else {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(err => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    Swal.fire("Error!", "Terjadi kesalahan saat memproses.", "error");
                 });
             }
         });
-
     });
 
 </script>

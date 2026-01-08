@@ -95,9 +95,13 @@ class BonusKehadiranController extends Controller
             );
         }
 
+        // Format: YYYY-MM untuk redirect filter
+        $redirectFilter = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT);
+
         return response()->json([
             'status' => true,
-            'message' => 'Bonus kehadiran berhasil diproses!'
+            'message' => 'Bonus kehadiran berhasil diproses!',
+            'redirect_filter' => $redirectFilter
         ]);
     }
 }
