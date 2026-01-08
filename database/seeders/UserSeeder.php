@@ -13,28 +13,28 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin
+        // Staf Absen
         User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@samara.test',
+            'name' => 'Staf Absen',
+            'email' => 'stafabsen@samara.test',
             'password' => Hash::make('password123'),
-            'role' => 'admin',
+            'role' => 'staf_absen',
         ]);
 
-        // Koor Absen
+        // Manajer
         User::create([
-            'name' => 'Koordinator Absen',
-            'email' => 'koorabsen@samara.test',
+            'name' => 'Manajer',
+            'email' => 'manajer@samara.test',
             'password' => Hash::make('password123'),
-            'role' => 'koor_absen',
+            'role' => 'manajer',
         ]);
 
-        // Koor Owner
+        // Direktur
         User::create([
-            'name' => 'Owner Name',
-            'email' => 'owner@samara.test',
+            'name' => 'Direktur',
+            'email' => 'direktur@samara.test',
             'password' => Hash::make('password123'),
-            'role' => 'owner',
+            'role' => 'direktur',
         ]);
     }
 }

@@ -189,10 +189,6 @@ class LaporanController extends Controller
                 ->update([
                     'is_approved' => false,
                     'tanggal_proses' => now(),
-                    // Hapus kolom yang tidak ada di tabel
-                    // 'approved_at' => null,
-                    // 'approved_by' => null,
-                    // 'rejected_reason' => $request->alasan,
                 ]);
 
             DB::commit();

@@ -7,7 +7,7 @@
 
     <!-- Navigation -->
     <ul class="nav nav-pills flex-column mb-auto mt-2 px-2">
-        @if (Auth::user()->role === 'admin')
+        @if (Auth::user()->role === 'manajer')
             <li class="nav-item mb-1">
                 <a href="{{ route('dashboard') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('dashboard') ? 'active bg-success text-white' : 'text-dark' }}">
@@ -56,7 +56,7 @@
                     <i class="bi bi-file-earmark-text me-2"></i> Laporan
                 </a>
             </li>
-        @elseif (Auth::user()->role === 'koor_absen')
+        @elseif (Auth::user()->role === 'staf_absen')
             <li class="nav-item mb-1">
                 <a href="{{ route('dashboard') }}"
                    class="nav-link d-flex align-items-center {{ request()->routeIs('dashboard') ? 'active bg-success text-white' : 'text-dark' }}">
@@ -69,7 +69,7 @@
                     <i class="bi bi-calendar-check me-2"></i> Data Absensi
                 </a>
             </li>
-        @elseif (Auth::user()->role === 'owner')
+        @elseif (Auth::user()->role === 'direktur')
             {{-- Approval Penggajian --}}
             <li class="nav-item mb-1">
                 <a class="nav-link d-flex align-items-center {{ request()->routeIs('laporan.approvePage') ? 'active bg-success text-white' : 'text-dark' }}"

@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
 // ===========================
 // 👑 ADMIN ONLY
 // ===========================
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:manajer'])->group(function () {
     Route::resource('karyawan', KaryawanController::class);
 
     // routes untuk penggajian
@@ -52,7 +52,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('penggajian', PenggajianController::class)
         ->only(['index', 'show'])
-        ->middleware(['auth','role:admin']); // sesuaikan middleware
+        ->middleware(['auth','role:manajer']); // sesuaikan middleware
 
     // Routes Laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
@@ -62,14 +62,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->whereNumber('tahun')
         ->whereNumber('bulan')
         ->name('laporan.periodeDetail');
-    // Slip PDF
-    Route::get('/laporan/slip/{id}', [LaporanController::class, 'slipPdf'])->name('laporan.slipPdf');
-
-
-
-    // Absensi routes (admin dapat akses)
-    Route::resource('absensi', AbsensiController::class);
-    Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 
     Route::prefix('parameter')->name('parameter.')->group(function () {
         Route::get('/', [ParameterPenggajianController::class, 'index'])->name('index');
@@ -99,13 +91,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // ===========================
 // 🧾 KOOR ABSEN ONLY
 // ===========================
-Route::middleware(['auth', 'role:koor_absen'])->group(function () {
+Route::middleware(['auth', 'role:staf_absen'])->group(function () {
     Route::resource('absensi', AbsensiController::class);
     Route::get('absensi-rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 });
 
+// ===========================
+// 📄 SLIP PDF (Manajer & Direktur)
+// ===========================
+Route::middleware(['auth', 'role:manajer,direktur'])->group(function () {
+    Route::get('/laporan/slip/{id}', [LaporanController::class, 'slipPdf'])->name('laporan.slipPdf');
+});
+
 // Routes Laporan (Owner only untuk approve)
-Route::middleware(['auth', 'role:owner'])->prefix('laporan')->group(function () {
+Route::middleware(['auth', 'role:direktur'])->prefix('laporan')->group(function () {
 
     // Halaman Daftar Periode yang Perlu di-Approve
     Route::get('/approve', [LaporanController::class, 'approvePage'])->name('laporan.approvePage');

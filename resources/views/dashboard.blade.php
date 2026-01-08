@@ -3,8 +3,8 @@
 @section('content')
 
 @php
-    $isAdmin = auth()->user()->role === 'admin';
-    $isKoor = auth()->user()->role === 'koor_absen';
+    $isAdmin = auth()->user()->role === 'manajer';
+    $isKoor = auth()->user()->role === 'staf_absen';
 @endphp
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

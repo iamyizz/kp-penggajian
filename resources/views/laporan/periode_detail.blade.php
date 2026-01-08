@@ -396,9 +396,6 @@
                 <a href="{{ route('laporan.slipPdf', $item->id_penggajian) }}" class="btn btn-danger">
                     <i class="bi bi-file-pdf me-1"></i> Download PDF
                 </a>
-                <button class="btn btn-primary" onclick="printSlip('{{ $item->id_penggajian }}')">
-                    <i class="bi bi-printer me-1"></i> Print
-                </button>
             </div>
         </div>
     </div>

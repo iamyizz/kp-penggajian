@@ -321,11 +321,6 @@
                                                     Periode: <strong class="text-dark">{{ $periode->nama_bulan }} {{ $periode->periode_tahun }}</strong>
                                                 </p>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-medium">Alasan Pembatalan <span class="text-muted">(opsional)</span></label>
-                                                <textarea name="alasan" class="form-control" rows="3"
-                                                          placeholder="Masukkan alasan pembatalan approval..."></textarea>
-                                            </div>
                                             <div class="alert alert-danger mb-0">
                                                 <small>
                                                     <i class="bi bi-exclamation-triangle me-1"></i>
