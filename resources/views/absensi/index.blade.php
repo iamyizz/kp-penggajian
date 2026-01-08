@@ -6,39 +6,66 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">Rekap Absensi Bulanan</h2>
-            <p class="small text-muted">Pilih karyawan dan bulan untuk melihat ringkasan absensi.</p>
+            <p class="small text-muted mb-0">Pilih karyawan dan bulan untuk melihat ringkasan absensi.</p>
         </div>
-        <!-- Button trigger for Import -->
-        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#importAbsensiModal">
-            Import Excel
-        </button>
 
-        <a href="{{ route('absensi.template') }}" class="btn btn-outline-secondary btn-sm">
-            Download Template
-        </a>
+        <!-- Button Group -->
+        <div class="d-flex gap-2">
+            <a href="{{ route('absensi.template') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-download me-1"></i> Download Template
+            </a>
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#importAbsensiModal">
+                <i class="bi bi-file-earmark-excel me-1"></i> Import Excel
+            </button>
+        </div>
+    </div>
 
-        <!-- Modal Import Absensi -->
-        <div class="modal fade" id="importAbsensiModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form method="POST" action="{{ route('absensi.import') }}" enctype="multipart/form-data">
-                        @csrf
-                        <div class="modal-header">
-                            <h5 class="modal-title">Import Data Absensi</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <!-- Modal Import Absensi -->
+    <div class="modal fade" id="importAbsensiModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('absensi.import') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="bi bi-file-earmark-excel me-2"></i>Import Data Absensi
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Info Box -->
+                        <div class="alert alert-info small mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <strong>Format yang didukung:</strong> .xlsx, .csv
+                            <br>
+                            <span class="text-muted">Pastikan format sesuai dengan template yang disediakan.</span>
                         </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="form-label">File Excel (.xlsx atau .csv)</label>
+
+                        <!-- Upload Area -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Pilih File</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                                </span>
                                 <input type="file" name="file" class="form-control" accept=".xlsx,.csv" required />
                             </div>
+                            <div class="form-text">
+                                <i class="bi bi-lightbulb me-1"></i>
+                                Belum punya template?
+                                <a href="{{ route('absensi.template') }}" class="text-decoration-none">Download di sini</a>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-success">Import</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-lg me-1"></i>Batal
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-upload me-1"></i>Import Data
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
