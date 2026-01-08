@@ -5,7 +5,7 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            @if (Auth::user()->role === 'owner')
+            @if (Auth::user()->role === 'direktur')
                 <a href="{{ route('laporan.approvePage') }}" class="btn btn-outline-secondary btn-sm mb-2">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
