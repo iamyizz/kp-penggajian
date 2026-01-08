@@ -27,6 +27,11 @@ class TunjanganController extends Controller
                     ->where('tahun', $tahun)
                     ->get();
 
+        // flag: sudah diproses untuk periode ini?
+        $sudahDiproses = TunjanganKehadiranMakan::where('bulan', (int)$bulan)
+            ->where('tahun', (int)$tahun)
+            ->exists();
+
         // ambil tarif langsung dari parameter
         $tarif_makan = ParameterPenggajian::where('key','tunjangan_makan_per_hari')->value('nilai');
         $tarif_potongan = ParameterPenggajian::where('key','potongan_telat_per_menit')->value('nilai');
@@ -36,6 +41,7 @@ class TunjanganController extends Controller
             'bulan' => $bulanTahun,
             'tarif_makan' => $tarif_makan,
             'tarif_potongan' => $tarif_potongan,
+            'sudahDiproses' => $sudahDiproses,
         ]);
     }
 
@@ -50,7 +56,14 @@ class TunjanganController extends Controller
                 'message' => 'Bulan dan tahun tidak diterima.'
             ]);
         }
-
+        
+        // cek apakah sudah diproses sebelumnya
+        if (TunjanganKehadiranMakan::where('bulan', $bulan)->where('tahun', $tahun)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda sudah memproses Tunjangan bulan ini.'
+            ], 409);
+        }
         // ambil parameter
         $tarif_makan = ParameterPenggajian::where('key', 'tunjangan_makan_per_hari')->value('nilai');
         $potongan_terlambat = ParameterPenggajian::where('key','potongan_telat_per_menit')->value('nilai') ?? 0;

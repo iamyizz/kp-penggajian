@@ -34,10 +34,16 @@ class PenggajianController extends Controller
             ->where('periode_tahun', (int)$tahun)
             ->orderBy('karyawan_id')
             ->get();
+       
+            // flag: sudah diproses untuk periode ini?
+        $sudahDiproses = Penggajian::where('periode_bulan', (int)$bulan)
+            ->where('periode_tahun', (int)$tahun)
+            ->exists();    
 
         return view('penggajian.index', [
             'data' => $data,
             'bulan' => $bulanTahun,
+            'sudahDiproses' => $sudahDiproses,
         ]);
     }
 
@@ -54,6 +60,14 @@ class PenggajianController extends Controller
 
         $bulan = (int) $request->bulan;
         $tahun = (int) $request->tahun;
+
+         // cek apakah sudah diproses sebelumnya
+        if (Penggajian::where('periode_bulan', $bulan)->where('periode_tahun', $tahun)->exists()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda sudah memproses penggajian bulan ini.'
+            ], 409);
+        }
 
         // Ambil parameter penting (default fallback bila tidak ada)
         $lemburPerJam = ParameterPenggajian::where('key', 'lembur_per_jam')->value('nilai') ?? 0;
